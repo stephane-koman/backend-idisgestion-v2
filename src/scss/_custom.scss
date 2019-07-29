@@ -1,1 +1,125 @@
 // Here you can add other styles
+.form-control.ng-select {
+  border: none;
+  padding: 0;
+}
+
+.input-group-addon {
+  min-width: 40px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.input-group-text{
+  background-color: #e8e8e8;
+}
+.disabled{cursor: not-allowed}
+.pagination-box {
+  position: relative;
+  //margin-top: -10px;
+}
+.pagination-range {
+  margin-top: 7px;
+  display: inline-block;
+}
+.pagination-controllers {
+  float: right;
+}
+
+.pagination-controllers input {
+  min-width: 60px;
+  text-align: right;
+}
+.pagination-limit{
+  margin-right: 25px;
+  display: inline-table;
+  width: 150px;
+}
+.pagination-pages {
+  display: inline-block;
+}
+.pagination-box button {
+  outline: none !important;
+}
+.pagination-prevpage, .pagination-nextpage, .pagination-firstpage, .pagination-lastpage {
+  vertical-align: top;
+}
+.pagination-page {
+  width: 160px;
+  display: inline-table;
+}
+// SELECT 2
+.ui-select-choices.dropdown-menu {
+  display: block;
+}
+
+.ui-select-multiple {
+  height: auto;
+  padding: 4px 4px 4px 4px !important;
+}
+.btn-group-xs>.btn, .btn-xs {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
+.ui-select-multiple .btn-default {
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.ngx-select_multiple{
+  height: auto;
+  padding: 4px !important;
+}
+
+ui-select-match .btn, .ui-select-multiple .btn {
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+ng-select.form-control {
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+ng-select .btn-secondary {
+  background-color: #ffffff !important;
+}
+
+.invalid-perso{
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #f86c6b;
+}
+.ng-select .ng-control {
+  border-radius: 0 !important;
+}
+
+.ng-select.is-valid .ng-control{
+  border-color: #4dbd74;
+}
+
+.ng-select.is-invalid .ng-control{
+  border-color: #f86c6b;
+}
+
+// ------------------- MENU -----------------------
+.sidebar .nav-link i, .sidebar .navbar .dropdown-toggle i, .navbar .sidebar .dropdown-toggle i {
+  font-size: 18px !important;
+}
+
+.form-control:disabled, .form-control[readonly] {
+  background-color: #f9f9f9 !important;
+}
+
+.ng-select {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.ng-select .ng-select-container  {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}

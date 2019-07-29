@@ -1,13 +1,33 @@
 import { Component, OnInit } from '@angular/core';
-import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities';
-import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
+import {ColisService} from '../../services/colis/colis.service';
+import {ClientService} from '../../services/client/client.service';
+import {EmployeService} from '../../services/employe/employe.service';
 
 @Component({
-  templateUrl: 'dashboard.component.html'
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
 
-  radioModel: string = 'Month';
+  public brandPrimary = '#20a8d8';
+  public brandSuccess = '#4dbd74';
+  public brandInfo = '#63c2de';
+  public brandWarning = '#f8cb00';
+  public brandDanger = '#f86c6b';
+
+  countEmployes: string;
+  countClients: string;
+  countSendColis: string;
+  countReceiveColis: string;
+
+  constructor(
+    private colisService: ColisService,
+    private clientService: ClientService,
+    private employeService: EmployeService
+  ){
+
+  }
 
   // lineChart1
   public lineChart1Data: Array<any> = [
@@ -18,10 +38,6 @@ export class DashboardComponent implements OnInit {
   ];
   public lineChart1Labels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   public lineChart1Options: any = {
-    tooltips: {
-      enabled: false,
-      custom: CustomTooltips
-    },
     maintainAspectRatio: false,
     scales: {
       xAxes: [{
@@ -59,8 +75,8 @@ export class DashboardComponent implements OnInit {
     }
   };
   public lineChart1Colours: Array<any> = [
-    {
-      backgroundColor: getStyle('--primary'),
+    { // grey
+      backgroundColor: this.brandPrimary,
       borderColor: 'rgba(255,255,255,.55)'
     }
   ];
@@ -76,10 +92,6 @@ export class DashboardComponent implements OnInit {
   ];
   public lineChart2Labels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   public lineChart2Options: any = {
-    tooltips: {
-      enabled: false,
-      custom: CustomTooltips
-    },
     maintainAspectRatio: false,
     scales: {
       xAxes: [{
@@ -119,7 +131,7 @@ export class DashboardComponent implements OnInit {
   };
   public lineChart2Colours: Array<any> = [
     { // grey
-      backgroundColor: getStyle('--info'),
+      backgroundColor: this.brandInfo,
       borderColor: 'rgba(255,255,255,.55)'
     }
   ];
@@ -136,10 +148,6 @@ export class DashboardComponent implements OnInit {
   ];
   public lineChart3Labels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
   public lineChart3Options: any = {
-    tooltips: {
-      enabled: false,
-      custom: CustomTooltips
-    },
     maintainAspectRatio: false,
     scales: {
       xAxes: [{
@@ -182,10 +190,6 @@ export class DashboardComponent implements OnInit {
   ];
   public barChart1Labels: Array<any> = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16'];
   public barChart1Options: any = {
-    tooltips: {
-      enabled: false,
-      custom: CustomTooltips
-    },
     maintainAspectRatio: false,
     scales: {
       xAxes: [{
@@ -234,18 +238,6 @@ export class DashboardComponent implements OnInit {
   public mainChartLabels: Array<any> = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Thursday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   /* tslint:enable:max-line-length */
   public mainChartOptions: any = {
-    tooltips: {
-      enabled: false,
-      custom: CustomTooltips,
-      intersect: true,
-      mode: 'index',
-      position: 'nearest',
-      callbacks: {
-        labelColor: function(tooltipItem, chart) {
-          return { backgroundColor: chart.data.datasets[tooltipItem.datasetIndex].borderColor };
-        }
-      }
-    },
     responsive: true,
     maintainAspectRatio: false,
     scales: {
@@ -285,18 +277,18 @@ export class DashboardComponent implements OnInit {
   };
   public mainChartColours: Array<any> = [
     { // brandInfo
-      backgroundColor: hexToRgba(getStyle('--info'), 10),
-      borderColor: getStyle('--info'),
+      backgroundColor: this.convertHex(this.brandInfo, 10),
+      borderColor: this.brandInfo,
       pointHoverBackgroundColor: '#fff'
     },
     { // brandSuccess
       backgroundColor: 'transparent',
-      borderColor: getStyle('--success'),
+      borderColor: this.brandSuccess,
       pointHoverBackgroundColor: '#fff'
     },
     { // brandDanger
       backgroundColor: 'transparent',
-      borderColor: getStyle('--danger'),
+      borderColor: this.brandDanger,
       pointHoverBackgroundColor: '#fff',
       borderWidth: 1,
       borderDash: [8, 5]
@@ -307,37 +299,33 @@ export class DashboardComponent implements OnInit {
 
   // social box charts
 
-  public brandBoxChartData1: Array<any> = [
+  public socialChartData1: Array<any> = [
     {
       data: [65, 59, 84, 84, 51, 55, 40],
       label: 'Facebook'
     }
   ];
-  public brandBoxChartData2: Array<any> = [
+  public socialChartData2: Array<any> = [
     {
       data: [1, 13, 9, 17, 34, 41, 38],
       label: 'Twitter'
     }
   ];
-  public brandBoxChartData3: Array<any> = [
+  public socialChartData3: Array<any> = [
     {
       data: [78, 81, 80, 45, 34, 12, 40],
       label: 'LinkedIn'
     }
   ];
-  public brandBoxChartData4: Array<any> = [
+  public socialChartData4: Array<any> = [
     {
       data: [35, 23, 56, 22, 97, 23, 64],
       label: 'Google+'
     }
   ];
 
-  public brandBoxChartLabels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-  public brandBoxChartOptions: any = {
-    tooltips: {
-      enabled: false,
-      custom: CustomTooltips
-    },
+  public socialChartLabels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public socialChartOptions: any = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
@@ -363,15 +351,118 @@ export class DashboardComponent implements OnInit {
       display: false
     }
   };
-  public brandBoxChartColours: Array<any> = [
+  public socialChartColours: Array<any> = [
     {
       backgroundColor: 'rgba(255,255,255,.1)',
       borderColor: 'rgba(255,255,255,.55)',
       pointHoverBackgroundColor: '#fff'
     }
   ];
-  public brandBoxChartLegend = false;
-  public brandBoxChartType = 'line';
+  public socialChartLegend = false;
+  public socialChartType = 'line';
+
+  // sparkline charts
+
+  public sparklineChartData1: Array<any> = [
+    {
+      data: [35, 23, 56, 22, 97, 23, 64],
+      label: 'Clients'
+    }
+  ];
+  public sparklineChartData2: Array<any> = [
+    {
+      data: [65, 59, 84, 84, 51, 55, 40],
+      label: 'Clients'
+    }
+  ];
+
+  public sparklineChartLabels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public sparklineChartOptions: any = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      xAxes: [{
+        display: false,
+      }],
+      yAxes: [{
+        display: false,
+      }]
+    },
+    elements: {
+      line: {
+        borderWidth: 2
+      },
+      point: {
+        radius: 0,
+        hitRadius: 10,
+        hoverRadius: 4,
+        hoverBorderWidth: 3,
+      }
+    },
+    legend: {
+      display: false
+    }
+  };
+  public sparklineChartDefault: Array<any> = [
+    {
+      backgroundColor: 'transparent',
+      borderColor: '#d1d4d7',
+    }
+  ];
+  public sparklineChartPrimary: Array<any> = [
+    {
+      backgroundColor: 'transparent',
+      borderColor: this.brandPrimary,
+    }
+  ];
+  public sparklineChartInfo: Array<any> = [
+    {
+      backgroundColor: 'transparent',
+      borderColor: this.brandInfo,
+    }
+  ];
+  public sparklineChartDanger: Array<any> = [
+    {
+      backgroundColor: 'transparent',
+      borderColor: this.brandDanger,
+    }
+  ];
+  public sparklineChartWarning: Array<any> = [
+    {
+      backgroundColor: 'transparent',
+      borderColor: this.brandWarning,
+    }
+  ];
+  public sparklineChartSuccess: Array<any> = [
+    {
+      backgroundColor: 'transparent',
+      borderColor: this.brandSuccess,
+    }
+  ];
+
+
+  public sparklineChartLegend = false;
+  public sparklineChartType = 'line';
+
+  // events
+  public chartClicked(e: any): void {
+    console.log(e);
+  }
+
+  public chartHovered(e: any): void {
+    console.log(e);
+  }
+
+  // convert Hex to RGBA
+  public convertHex(hex: string, opacity: number) {
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    const rgba = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + opacity / 100 + ')';
+    return rgba;
+  }
 
   public random(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -384,5 +475,39 @@ export class DashboardComponent implements OnInit {
       this.mainChartData2.push(this.random(80, 100));
       this.mainChartData3.push(65);
     }
+    this.getCountClients();
+    this.getCountEmployes();
+    this.getCountSendColis();
+    this.getCountReceiveColis();
+  }
+
+  radioModel: string = 'Month';
+
+  getCountEmployes(){
+    this.employeService.countEmployes()
+      .subscribe((count) =>{
+        this.countEmployes = count;
+      });
+  }
+
+  getCountClients(){
+    this.clientService.countClients()
+      .subscribe((count) =>{
+        this.countClients = count;
+      });
+  }
+
+  getCountSendColis(){
+    this.colisService.countSendColis()
+      .subscribe((count) =>{
+        this.countSendColis = count;
+      });
+  }
+
+  getCountReceiveColis(){
+    this.colisService.countReceiveColis()
+      .subscribe((count) =>{
+        this.countReceiveColis = count;
+      });
   }
 }

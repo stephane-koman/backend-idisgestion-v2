@@ -1,0 +1,382 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <!-- Nav tabs -->
+      <tabset #staticTabs>
+        <tab (selectTab)="onSelect($event)" id="liste-reglement">
+          <ng-template tabHeading>
+            <span class="font-weight-bold">
+              <i class="icon-bag font-weight-bold"></i> Règlement
+            </span>
+          </ng-template>
+          <div class="card">
+            <div class="card-header">
+              <button class="btn btn-light float-right" (click)="reload()"><i class="fa fa-refresh"></i> Actualiser
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Facture</span>
+                    </div>
+                    <input (keyup)="searchReglements()" class="form-control" type="text" [(ngModel)]="numeroFacture"/>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Type</span>
+                    </div>
+                    <ng-select class="form-control" *ngIf="allTypesReglements?.length > 0"
+                               [items]="allTypesReglements"
+                               bindLabel="nomTypeReglement"
+                               (change)="searchNomTypeReglement($event)"
+                               placeholder="Aucun type sélectionné">
+                      <ng-template ng-label-tmp let-item="item">
+                        {{item?.nomTypeReglement | uppercase}}
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item?.nomTypeReglement | uppercase}}
+                      </ng-template>
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text text-color-blue">Statut</span>
+                    </div>
+                    <ng-select [clearable]="false" class="form-control" [(ngModel)]="enable" (change)="searchStatut()">
+                      <ng-option [value]="2">Tout</ng-option>
+                      <ng-option [value]="1">Actif</ng-option>
+                      <ng-option [value]="0">Inactif</ng-option>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="allReglements?.reglements">
+                <table class="table table-condensed table-bordered data-table" [mfData]="allReglements?.reglements"
+                       #mf="mfDataTable" [mfRowsOnPage]="size">
+                  <thead>
+                  <tr>
+                    <th style="width: 20%" class="text-center">
+                      <mfDefaultSorter by="numeroReglement" [mfShowSortableArrows]="false">Facture</mfDefaultSorter>
+                    </th>
+                    <th style="width: 20%" class="text-center">
+                      <mfDefaultSorter by="typeReglement" [mfShowSortableArrows]="false">Type
+                      </mfDefaultSorter>
+                    </th>
+                    <th style="width: 25%" class="text-center">
+                      <mfDefaultSorter by="client" [mfShowSortableArrows]="false">Client
+                      </mfDefaultSorter>
+                    </th>
+                    <th style="width: 20%" class="text-center">
+                      <mfDefaultSorter by="credit" [mfShowSortableArrows]="true">Montant</mfDefaultSorter>
+                    </th>
+                    <th style="width: 15%" class="text-center">
+                      <mfDefaultSorter>Actions</mfDefaultSorter>
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let reglement of mf.data; let i = index">
+                    <td class="font-weight-bold">{{reglement?.facture?.numeroFacture}}</td>
+                    <td>{{reglement?.typeReglement?.nomTypeReglement | uppercase}}</td>
+                    <td>{{reglement?.facture?.colis?.client?.raisonSociale | uppercase}}</td>
+                    <td class="text-right font-weight-bold">{{reglement?.montantRegle}}
+                      {{user?.personne?.site?.devise?.nomDevise}}
+                    </td>
+                    <td class="text-center">
+                      <div class="btn-group" dropdown [dropup]="false">
+                        <button id="button-basic" dropdownToggle type="button" class="btn btn-light dropdown-toggle"
+                                aria-controls="dropdown-basic">
+                          Sélectionner <span class="caret"></span>
+                        </button>
+                        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+                            role="menu" aria-labelledby="button-basic">
+                          <li role="menuitem"><a class="dropdown-item text-warning font-weight-bold"
+                                                 (click)="editForm(reglement)">
+                            <i class="fa fa-edit text-warning font-weight-bold"></i> Modifier</a>
+                          </li>
+                          <li role="menuitem"><a class="dropdown-item text-default font-weight-bold"
+                                                 (click)="showForm(reglement)"><i
+                            class="fa fa-eye text-default font-weight-bold"></i> Afficher</a></li>
+                          <li role="menuitem"><a class="dropdown-item text-danger font-weight-bold"
+                                                 *ngIf="reglement.enable === 1"
+                                                 (click)="openRemoveModal(reglement, 'd', i)"><i
+                            class="fa fa-lock text-danger font-weight-bold"></i>
+                            Désactiver</a></li>
+                          <li role="menuitem"><a class="dropdown-item text-success font-weight-bold"
+                                                 *ngIf="reglement.enable === 0"
+                                                 (click)="openRemoveModal(reglement, 'e', i)"><i
+                            class="fa fa-unlock-alt text-success font-weight-bold"></i> Activer</a></li>
+                          <li class="divider dropdown-divider"></li>
+                          <li role="menuitem"><a class="dropdown-item text-danger font-weight-bold"
+                                                 (click)="openRemoveModal(reglement, 'r', i)"><i
+                            class="fa fa-remove text-danger font-weight-bold"></i> Supprimer</a></li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="allReglements?.reglements.length === 0">
+                    <td colspan="5" class="text-center">Aucun resultat trouvé</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <app-pagination
+                  [pages]="pages"
+                  [nombreElements]="allReglements?.nombreReglements"
+                  [totalElements]="allReglements?.totalReglements"
+                  [totalPages]="allReglements?.totalPages"
+                  [currentPage]="currentPage"
+                  [size]="size"
+                  [page]="page"
+                  (search)="searchPage($event)"
+                  (limit)="searchLimit($event)"
+                  (first)="firstPage($event)"
+                  (next)="nextPage($event)"
+                  (previous)="previousPage($event)"
+                  (last)="lastPage($event)"
+                ></app-pagination>
+              </div>
+
+            </div>
+          </div>
+        </tab>
+        <tab (selectTab)="onSelect($event)" id="creer-reglement">
+          <ng-template tabHeading>
+            <span *ngIf="type === 'i'" class="new">
+              <i class="fa fa-plus"></i> Créer règlement
+            </span>
+            <span *ngIf="type === 'u'" class="update">
+              <i class="fa fa-edit"></i> Modifier règlement
+            </span>
+            <span *ngIf="type === 's'" class="show">
+              <i class="fa fa-eye"></i> Afficher règlement
+            </span>
+          </ng-template>
+          <div class="card-title" *ngIf="error">
+            <alert class="text-center" [type]="alert.type" [dismissible]="alert.dismissible" (onClose)="dismiss()">
+              <strong>{{error}}</strong>
+            </alert>
+          </div>
+          <form [formGroup]="reglementForm" novalidate>
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <input id="id" type="hidden" formControlName="id">
+                  <div class="form-group row col-md-6">
+                    <label for="typeReglement" class="control-label col-md-4 text-right">Type</label>
+                    <div class="col-md-8">
+                      <ng-select [ngClass]="{'is-invalid': ((!!reglementForm?.controls['typeReglement']?.errors?.required) && (reglementForm.controls['typeReglement'].errors && (reglementForm.controls['typeReglement'].dirty || reglementForm.controls['typeReglement'].touched))),
+                   'is-valid': ((!reglementForm?.controls['typeReglement']?.errors?.required) && (!reglementForm.controls['typeReglement'].errors && (reglementForm.controls['typeReglement'].dirty || reglementForm.controls['typeReglement'].touched)))}"
+                                 id="typeReglement" class="form-control" *ngIf="allTypesReglements?.length > 0"
+                                 [items]="allTypesReglements"
+                                 bindLabel="nomTypeReglement"
+                                 (change)="getNomTypeReglement($event)"
+                                 formControlName="typeReglement"
+                                 placeholder="Aucun type sélectionnée">
+                        <ng-template ng-label-tmp let-item="item">
+                          {{item?.nomTypeReglement | uppercase}}
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item">
+                          {{item?.nomTypeReglement | uppercase}}
+                        </ng-template>
+                      </ng-select>
+                      <div
+                        *ngIf="reglementForm.controls['typeReglement'].errors && (reglementForm.controls['typeReglement'].dirty || reglementForm.controls['typeReglement'].touched)"
+                        class="invalid-perso">
+                        <span
+                          [hidden]="!reglementForm.controls['typeReglement'].errors?.required">Veuillez sélectionner un <strong>type</strong>.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="facture" class="control-label col-md-4 text-right">Facture</label>
+                    <div class="col-md-8">
+                      <ng-select [ngClass]="{'is-invalid': (!!reglementForm?.controls['facture']?.errors?.required) && (reglementForm.controls['facture'].errors && (reglementForm.controls['facture'].dirty || reglementForm.controls['facture'].touched)),
+                   'is-valid': (!reglementForm?.controls['facture']?.errors?.required) && (!reglementForm.controls['facture'].errors && (reglementForm.controls['facture'].dirty || reglementForm.controls['facture'].touched))}"
+                                 id="facture" class="form-control"
+                                 [items]="allFactures"
+                                 bindLabel="numeroFacture"
+                                 (change)="searchNumeroFacture($event)"
+                                 (search)="findFacturesByNumeroFacture($event)"
+                                 formControlName="facture"
+                                 placeholder="Aucune facture sélectionnée">
+                      </ng-select>
+                      <div
+                        *ngIf="reglementForm.controls['facture'].errors && (reglementForm.controls['facture'].dirty || reglementForm.controls['facture'].touched)"
+                        class="invalid-perso">
+            <span
+              [hidden]="!reglementForm.controls['facture'].errors?.required">La <strong>facture</strong> est obligatoire.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="montantRegle" class="control-label col-md-4 text-right">Montant</label>
+                    <div class="col-md-8">
+                      <div class="input-group mb-4">
+                        <input [ngClass]="{'is-invalid': ((!!reglementForm?.controls['montantRegle']?.errors?.required) && (reglementForm.controls['montantRegle'].errors && (reglementForm.controls['montantRegle'].dirty || reglementForm.controls['montantRegle'].touched))),
+                   'is-valid': ((!reglementForm?.controls['montantRegle']?.errors?.required) && (!reglementForm.controls['montantRegle'].errors && (reglementForm.controls['montantRegle'].dirty || reglementForm.controls['montantRegle'].touched)))}"
+                               id="montantRegle" type="number" class="form-control" formControlName="montantRegle">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+
+                      <div
+                        *ngIf="reglementForm.controls['montantRegle'].errors && (reglementForm.controls['montantRegle'].dirty || reglementForm.controls['montantRegle'].touched)"
+                        class="invalid-perso">
+            <span
+              [hidden]="!reglementForm.controls['montantRegle'].errors?.required">Le <strong>montant</strong> est obligatoire.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6" *ngIf="montantRestant !== null">
+                    <label class="control-label col-md-4 text-right text-danger">Montant restant</label>
+                    <div class="col-md-8">
+                      <div class="input-group mb-4">
+                        <div class="form-control" > {{ montantRestant }} </div>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+
+                      <div
+                              *ngIf="reglementForm.controls['montantRegle'].errors && (reglementForm.controls['montantRegle'].dirty || reglementForm.controls['montantRegle'].touched)"
+                              class="invalid-perso">
+            <span
+                    [hidden]="!reglementForm.controls['montantRegle'].errors?.required">Le <strong>montant</strong> est obligatoire.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card" *ngIf="facture">
+              <div class="card-header">FACTURE</div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="form-group row col-md-6">
+                    <label for="client" class="control-label col-md-4 text-right">Client</label>
+                    <div class="col-md-8">
+                      <input id="client" type="text" class="form-control" [value]="facture?.colis?.client?.raisonSociale"
+                             disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="numeroFacture" class="control-label col-md-4 text-right">Colis</label>
+                    <div class="col-md-8">
+                      <input id="numeroFacture" type="text" class="form-control" [value]="facture?.colis.reference"
+                             disabled>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card" *ngIf="facture">
+              <div class="card-header">LIGNES FACTURES</div>
+              <div class="card-body ligne-facure">
+                <table class="table table-condensed data-table">
+                  <thead>
+                  <tr>
+                    <th style="width: 20%" class="text-center">
+                      Designation
+                    </th>
+                    <th style="width: 15%" class="text-center">
+                      Quantité
+                    </th>
+                    <th style="width: 25%" class="text-center">
+                      Prix Unitaire
+                    </th>
+                    <th style="width: 30%" class="text-center">
+                      Prix Total
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let dc of facture?.colis?.detailsColis; let i = index;">
+                    <td>
+                      <input [value]="dc?.designation" type="text" class="form-control" disabled>
+                    </td>
+                    <td>
+                      <input [value]="dc?.quantite" type="number" class="form-control text-right" disabled>
+                    </td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input [value]="dc?.prixUnitaire" type="number" class="form-control text-right" disabled>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input [value]="dc?.prixTotal" type="number" class="form-control text-right" disabled>
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="facture?.colis?.detailsColis?.length > 0">
+                    <td colspan="3" class="text-right font-weight-bold">Montant HT</td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input type="number" class="form-control text-right font-weight-bold" disabled [value]="facture?.debit/(1 + facture?.tva?.valeurTva)">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="facture?.colis?.detailsColis?.length > 0" class="tva">
+                    <td colspan="3" class="text-right font-weight-bold">TVA</td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input type="number" class="form-control text-right" disabled [value]="facture?.tva?.valeurTva*100">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">%</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="facture?.colis?.detailsColis?.length > 0">
+                    <td colspan="3" class="text-right font-weight-bold">Montant TTC</td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input type="number" class="form-control text-right font-weight-bold" disabled [value]="facture?.debit">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-light float-left" type="reset" *ngIf="type === 'i'"
+                        (click)="clearReglementForm()">
+                  <i class="fa fa-refresh"></i> Effacer
+                </button>
+                <button *ngIf="type === 'i'" [ladda]="isLoading" type="button" class="btn btn-primary float-right"
+                        [disabled]='reglementForm.status==="INVALID"' (click)="saveReglement()">
+                  Enregistrer
+                </button>
+                <button *ngIf="type === 'u'" [ladda]="isLoading" type="button" class="btn btn-warning float-right"
+                        [disabled]='reglementForm.status==="INVALID"' (click)="updateReglement()">
+                  Modifier
+                </button>
+              </div>
+            </div>
+          </form>
+        </tab>
+      </tabset>
+    </div><!--/.col-->
+  </div><!--/.row-->
+</div>

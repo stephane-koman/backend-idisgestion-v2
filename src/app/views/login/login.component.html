@@ -1,49 +1,63 @@
-<div class="app-body">
-  <main class="main d-flex align-items-center">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-8 mx-auto">
-          <div class="card-group">
-            <div class="card p-4">
-              <div class="card-body">
-                <form>
-                  <h1>Login</h1>
-                  <p class="text-muted">Sign In to your account</p>
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="icon-user"></i></span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Username" autocomplete="username" required>
-                  </div>
-                  <div class="input-group mb-4">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><i class="icon-lock"></i></span>
-                    </div>
-                    <input type="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
-                  </div>
-                  <div class="row">
-                    <div class="col-6">
-                      <button type="button" class="btn btn-primary px-4">Login</button>
-                    </div>
-                    <div class="col-6 text-right">
-                      <button type="button" class="btn btn-link px-0">Forgot password?</button>
-                    </div>
-                  </div>
-                </form>
+<div class="app flex-row align-items-center">
+
+  <div class="container">
+    <div class="logo text-center">
+      <h1 class="">IDIS-GESTION</h1>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card-group">
+          <div class="card p-4">
+            <div class="card-body">
+              <h1 class="text-center">Connexion</h1>
+              <p class="text-muted text-center">Connectez-vous à votre espace</p>
+              <div class="card-title" *ngIf="error">
+                <alert class="text-center" [type]="alert.type" [dismissible]="alert.dismissible" (onClose)="dismiss()">
+                  <strong>Pseudo ou mot de passe incorrecte</strong>
+                </alert>
               </div>
-            </div>
-            <div class="card text-white bg-primary py-5 d-md-down-none" style="width:44%">
-              <div class="card-body text-center">
-                <div>
-                  <h2>Sign up</h2>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                  <button type="button" class="btn btn-primary active mt-3">Register Now!</button>
+              <form [formGroup]="loginForm" novalidate (ngSubmit)="onSubmit()">
+                <div class="input-group mb-4">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="icon-user"></i></span>
+                  </div>
+                  <input [ngClass]="{'is-invalid': (!!loginForm?.controls['username']?.errors?.required) && (loginForm.controls['username'].errors && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched)),
+                         'is-valid': (!loginForm?.controls['username']?.errors?.required) && (!loginForm.controls['username'].errors && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched))}"
+                         type="text" class="form-control" placeholder="Pseudo" autofocus formControlName="username">
+                  <div
+                    *ngIf="loginForm.controls['username'].errors && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched)"
+                    class="invalid-feedback offset-md-2">
+                    <span [hidden]="!loginForm.controls['username'].errors?.required">Le <strong>pseudo</strong> est obligatoire.</span>
+                  </div>
                 </div>
-              </div>
+                <div class="input-group mb-4">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="icon-lock"></i></span>
+                  </div>
+                  <input [ngClass]="{'is-invalid': (!!loginForm?.controls['password']?.errors?.required) && (loginForm.controls['password'].errors && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)),
+                         'is-valid': (!loginForm?.controls['password']?.errors?.required) && (!loginForm.controls['password'].errors && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched))}"
+                         type="password" class="form-control" placeholder="Mot de passe" formControlName="password">
+                  <div
+                    *ngIf="loginForm.controls['password'].errors && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)"
+                    class="invalid-feedback offset-md-2">
+                    <span [hidden]="!loginForm.controls['password'].errors?.required">Le <strong>mot de passe</strong> est obligatoire.</span>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <button [ladda]="isLoading" type="submit" class="btn btn-primary px-4" [disabled]='loginForm.status==="INVALID"'>Se
+                      connecter
+                    </button>
+                  </div>
+                  <div class="col-6 text-right">
+                    <button type="button" class="btn btn-link px-0">Mot de passe oublié?</button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>

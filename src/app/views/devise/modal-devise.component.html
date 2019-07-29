@@ -1,0 +1,52 @@
+<div class="modal-header modal-primary">
+  <h4 class="modal-title" *ngIf="type === 'i'">Ajouter Devise</h4>
+  <h4 class="modal-title" *ngIf="type === 'u'">Modifier Devise</h4>
+  <h4 class="modal-title" *ngIf="type === 's'">Afficher Devise</h4>
+  <button type="button" class="close" (click)="onCancel()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="card-title" *ngIf="error">
+    <alert class="text-center" [type]="alert.type" [dismissible]="alert.dismissible" (onClose)="dismiss()">
+      <strong>{{error}}</strong>
+    </alert>
+  </div>
+  <form (keyup.enter)="deviseForm.status==='VALID' ? enterPress() : null" [formGroup]="deviseForm" novalidate>
+    <div class="form-group row">
+      <label for="nomDevise" class="control-label col-md-3">Nom</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!deviseForm?.controls['nomDevise']?.errors?.minlength || !!deviseForm?.controls['nomDevise']?.errors?.required) && (deviseForm.controls['nomDevise'].errors && (deviseForm.controls['nomDevise'].dirty || deviseForm.controls['nomDevise'].touched)),
+               'is-valid': (!deviseForm?.controls['nomDevise']?.errors?.minlength || !deviseForm?.controls['nomDevise']?.errors?.required) && (!deviseForm.controls['nomDevise'].errors && (deviseForm.controls['nomDevise'].dirty || deviseForm.controls['nomDevise'].touched))}"
+               id="nomDevise" type="text" class="form-control"
+               formControlName="nomDevise">
+        <div
+          *ngIf="deviseForm.controls['nomDevise'].errors && (deviseForm.controls['nomDevise'].dirty || deviseForm.controls['nomDevise'].touched)"
+          class="invalid-feedback">
+          <span [hidden]="!deviseForm.controls['nomDevise'].errors?.required">Le <strong>nom</strong> est obligatoire.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="description" class="control-label col-md-3">Description</label>
+      <div class="col-md-9">
+        <textarea id="description" cols="30" rows="2" class="form-control"
+               formControlName="description"></textarea>
+      </div>
+    </div>
+    <input id="id" type="hidden" formControlName="id">
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Fermer</button>
+  <button *ngIf="type === 'i'" [ladda]="isLoading" type="button" class="btn btn-primary"
+          [disabled]='deviseForm.status==="INVALID"'
+          (click)="saveDevise()">
+    Enregistrer
+  </button>
+  <button *ngIf="type === 'u'" [ladda]="isLoading" type="button" class="btn btn-warning"
+          [disabled]='deviseForm.status==="INVALID"'
+          (click)="updateDevise()">
+    Modifier
+  </button>
+</div>

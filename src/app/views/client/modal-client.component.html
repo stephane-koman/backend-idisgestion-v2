@@ -1,0 +1,101 @@
+<div class="modal-header modal-primary">
+  <h4 class="modal-title" *ngIf="type === 'i'">Ajouter Client</h4>
+  <h4 class="modal-title" *ngIf="type === 'u'">Modifier Client</h4>
+  <h4 class="modal-title" *ngIf="type === 's'">Afficher Client</h4>
+  <button type="button" class="close" (click)="onCancel()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="card-title" *ngIf="error">
+    <alert class="text-center" [type]="alert.type" [dismissible]="alert.dismissible" (onClose)="dismiss()">
+      <strong>{{error}}</strong>
+    </alert>
+  </div>
+  <form (keyup.enter)="clientForm.status==='VALID' ? enterPress() : null" [formGroup]="clientForm" novalidate>
+    <div class="form-group row" *ngIf="type === 'u' || type === 's' ">
+      <label for="codeClient" class="control-label col-md-3">Code client</label>
+      <div class="col-md-9">
+        <input id="codeClient" type="text" class="form-control"
+               formControlName="codeClient">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="raisonSociale" class="control-label col-md-3">Nom & Prénom(s)</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!clientForm?.controls['raisonSociale']?.errors?.minlength || !!clientForm?.controls['raisonSociale']?.errors?.required) && (clientForm.controls['raisonSociale'].errors && (clientForm.controls['raisonSociale'].dirty || clientForm.controls['raisonSociale'].touched)),
+               'is-valid': (!clientForm?.controls['raisonSociale']?.errors?.minlength || !clientForm?.controls['raisonSociale']?.errors?.required) && (!clientForm.controls['raisonSociale'].errors && (clientForm.controls['raisonSociale'].dirty || clientForm.controls['raisonSociale'].touched))}"
+               id="raisonSociale" type="text" class="form-control"
+               formControlName="raisonSociale">
+        <div
+          *ngIf="clientForm.controls['raisonSociale'].errors && (clientForm.controls['raisonSociale'].dirty || clientForm.controls['raisonSociale'].touched)"
+          class="invalid-feedback">
+          <span [hidden]="!clientForm.controls['raisonSociale'].errors?.required">Le <strong>nom</strong> est obligatoire.</span>
+          <span [hidden]="!clientForm.controls['raisonSociale'].errors?.minlength">Le <strong>nom</strong> doit être de 4 caractères au minimum.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="raisonSociale" class="control-label col-md-3">Contact</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!clientForm?.controls['contact']?.errors?.minlength || !!clientForm?.controls['contact']?.errors?.required || !!clientForm?.controls['contact']?.errors?.pattern) && (clientForm.controls['contact'].errors && (clientForm.controls['contact'].dirty || clientForm.controls['contact'].touched)),
+               'is-valid': (!clientForm?.controls['contact']?.errors?.minlength || !clientForm?.controls['contact']?.errors?.required || !clientForm?.controls['contact']?.errors?.pattern) && (!clientForm.controls['contact'].errors && (clientForm.controls['contact'].dirty || clientForm.controls['contact'].touched))}"
+               id="contact" type="tel" class="form-control"
+               formControlName="contact">
+        <div
+          *ngIf="clientForm.controls['contact'].errors && (clientForm.controls['contact'].dirty || clientForm.controls['contact'].touched)"
+          class="invalid-feedback">
+          <span [hidden]="!clientForm.controls['contact'].errors?.required">Le <strong>contact</strong> est obligatoire.</span>
+          <span [hidden]="!clientForm.controls['contact'].errors?.minlength">Le <strong>contact</strong> doit être de 8 chiffres au minimum.</span>
+          <span
+            [hidden]="!clientForm.controls['contact'].errors?.pattern">Le <strong>contact</strong> est invalide.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="email" class="control-label col-md-3">Email</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!clientForm?.controls['email']?.errors?.email || !!clientForm?.controls['email']?.errors?.required) && (clientForm.controls['email'].errors && (clientForm.controls['email'].dirty || clientForm.controls['email'].touched)),
+               'is-valid': (!clientForm?.controls['email']?.errors?.email || !clientForm?.controls['email']?.errors?.required) && (!clientForm.controls['email'].errors && (clientForm.controls['email'].dirty || clientForm.controls['email'].touched))}"
+               id="email" type="email" class="form-control"
+               formControlName="email">
+        <div
+          *ngIf="clientForm.controls['email'].errors && (clientForm.controls['email'].dirty || clientForm.controls['email'].touched)"
+          class="invalid-feedback">
+          <span
+            [hidden]="!clientForm.controls['email'].errors?.required">L'<strong>email</strong> est obligatoire.</span>
+          <span [hidden]="!clientForm.controls['email'].errors?.email">L'<strong>email</strong> est invalide.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="adresse" class="control-label col-md-3">Adresse</label>
+      <div class="col-md-9">
+        <textarea [ngClass]="{'is-invalid': (!!clientForm?.controls['adresse']?.errors?.required) && (clientForm.controls['adresse'].errors && (clientForm.controls['adresse'].dirty || clientForm.controls['adresse'].touched)),
+                  'is-valid': (!clientForm?.controls['adresse']?.errors?.required) && (!clientForm.controls['adresse'].errors && (clientForm.controls['adresse'].dirty || clientForm.controls['adresse'].touched))}"
+                  icols="30" rows="2" id="adresse" class="form-control"
+                  formControlName="adresse"></textarea>
+        <div
+          *ngIf="clientForm.controls['adresse'].errors && (clientForm.controls['adresse'].dirty || clientForm.controls['adresse'].touched)"
+          class="invalid-feedback">
+          <span
+            [hidden]="!clientForm.controls['adresse'].errors?.required">L'<strong>adresse</strong> est obligatoire.</span>
+        </div>
+      </div>
+    </div>
+    <input id="id" type="hidden" formControlName="id">
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Fermer</button>
+  <button *ngIf="type === 'i'" [ladda]="isLoading" type="button" class="btn btn-primary"
+          [disabled]='clientForm.status==="INVALID"'
+          (click)="saveClient()">
+    Enregistrer
+  </button>
+  <button *ngIf="type === 'u'" [ladda]="isLoading" type="button" class="btn btn-warning"
+          [disabled]='clientForm.status==="INVALID"'
+          (click)="updateClient()">
+    Modifier
+  </button>
+</div>

@@ -27,248 +27,128 @@ export interface NavData {
   class?: string;
   label?: NavLabel;
   wrapper?: NavWrapper;
+  roles?: Array<string>;
 }
 
 export const navItems: NavData[] = [
   {
-    name: 'Dashboard',
+    name: 'Tableau de bord',
     url: '/dashboard',
     icon: 'icon-speedometer',
-    badge: {
-      variant: 'info',
-      text: 'NEW'
-    }
+    roles: ["ADMIN", "USER", "CLIENT"]
   },
   {
     title: true,
-    name: 'Theme'
+    name: 'MENU',
+    roles: ["ADMIN", "USER", "CLIENT"]
   },
   {
-    name: 'Colors',
-    url: '/theme/colors',
-    icon: 'icon-drop'
+    name: 'Clients',
+    url: '/client',
+    icon: 'icon-people',
+    roles: ["ADMIN", "USER"]
   },
   {
-    name: 'Typography',
-    url: '/theme/typography',
-    icon: 'icon-pencil'
+    name: 'Employes',
+    url: '/employe',
+    icon: 'icon-people',
+    roles: ["ADMIN", "USER"]
   },
   {
-    title: true,
-    name: 'Components'
+    name: 'Colis',
+    url: '/colis-client',
+    icon: 'icon-bag',
+    roles: ["CLIENT"]
   },
   {
-    name: 'Base',
-    url: '/base',
-    icon: 'icon-puzzle',
+    name: 'Colis',
+    url: '/colis',
+    icon: 'icon-bag',
+    roles: ["ADMIN", "USER"],
     children: [
       {
-        name: 'Cards',
-        url: '/base/cards',
-        icon: 'icon-puzzle'
+        name: 'Envoyés',
+        url: '/colis/send',
+        icon: 'icon-action-redo'
       },
       {
-        name: 'Carousels',
-        url: '/base/carousels',
-        icon: 'icon-puzzle'
-      },
-      {
-        name: 'Collapses',
-        url: '/base/collapses',
-        icon: 'icon-puzzle'
-      },
-      {
-        name: 'Forms',
-        url: '/base/forms',
-        icon: 'icon-puzzle'
-      },
-      {
-        name: 'Pagination',
-        url: '/base/paginations',
-        icon: 'icon-puzzle'
-      },
-      {
-        name: 'Popovers',
-        url: '/base/popovers',
-        icon: 'icon-puzzle'
-      },
-      {
-        name: 'Progress',
-        url: '/base/progress',
-        icon: 'icon-puzzle'
-      },
-      {
-        name: 'Switches',
-        url: '/base/switches',
-        icon: 'icon-puzzle'
-      },
-      {
-        name: 'Tables',
-        url: '/base/tables',
-        icon: 'icon-puzzle'
-      },
-      {
-        name: 'Tabs',
-        url: '/base/tabs',
-        icon: 'icon-puzzle'
-      },
-      {
-        name: 'Tooltips',
-        url: '/base/tooltips',
-        icon: 'icon-puzzle'
+        name: 'Réçus',
+        url: '/colis/receive',
+        icon: 'icon-action-undo'
       }
     ]
   },
   {
-    name: 'Buttons',
-    url: '/buttons',
-    icon: 'icon-cursor',
+    name: 'Finances',
+    url: '/finances',
+    icon: 'icon-diamond',
+    roles: ["ADMIN", "USER"],
     children: [
       {
-        name: 'Buttons',
-        url: '/buttons/buttons',
-        icon: 'icon-cursor'
+        name: 'Factures',
+        url: '/finances/facture',
+        icon: 'icon-calculator',
+        roles: ["ADMIN", "USER"],
       },
       {
-        name: 'Dropdowns',
-        url: '/buttons/dropdowns',
-        icon: 'icon-cursor'
-      },
-      {
-        name: 'Brand Buttons',
-        url: '/buttons/brand-buttons',
-        icon: 'icon-cursor'
+        name: 'Règlements',
+        url: '/finances/reglement',
+        icon: 'icon-calculator',
+        roles: ["ADMIN", "USER"],
       }
     ]
   },
   {
-    name: 'Charts',
-    url: '/charts',
-    icon: 'icon-pie-chart'
-  },
-  {
-    name: 'Icons',
-    url: '/icons',
-    icon: 'icon-star',
+    name: 'Paramètres',
+    url: '/parametres',
+    icon: 'icon-settings',
+    roles: ["ADMIN"],
     children: [
       {
-        name: 'CoreUI Icons',
-        url: '/icons/coreui-icons',
-        icon: 'icon-star',
-        badge: {
-          variant: 'success',
-          text: 'NEW'
-        }
+        name: 'Rôles',
+        url: '/parametres/role',
+        icon: 'icon-user-following'
       },
       {
-        name: 'Flags',
-        url: '/icons/flags',
-        icon: 'icon-star'
+        name: 'Utilisateurs',
+        url: '/parametres/utilisateur',
+        icon: 'icon-people'
       },
       {
-        name: 'Font Awesome',
-        url: '/icons/font-awesome',
-        icon: 'icon-star',
-        badge: {
-          variant: 'secondary',
-          text: '4.7'
-        }
+        name: 'Fonctions',
+        url: '/parametres/fonction',
+        icon: 'icon-wrench'
       },
       {
-        name: 'Simple Line Icons',
-        url: '/icons/simple-line-icons',
-        icon: 'icon-star'
+        name: 'Sites',
+        url: '/parametres/site',
+        icon: 'icon-grid'
+      },
+      {
+        name: 'Pays',
+        url: '/parametres/pays',
+        icon: 'icon-globe'
+      },
+      {
+        name: 'Types Factures',
+        url: '/parametres/type-facture',
+        icon: 'icon-diamond'
+      },
+      {
+        name: 'Types Règlements',
+        url: '/parametres/type-reglement',
+        icon: 'icon-diamond'
+      },
+      {
+        name: 'Devises',
+        url: '/parametres/devise',
+        icon: 'icon-diamond'
+      },
+      {
+        name: 'Tva',
+        url: '/parametres/tva',
+        icon: 'icon-diamond'
       }
     ]
-  },
-  {
-    name: 'Notifications',
-    url: '/notifications',
-    icon: 'icon-bell',
-    children: [
-      {
-        name: 'Alerts',
-        url: '/notifications/alerts',
-        icon: 'icon-bell'
-      },
-      {
-        name: 'Badges',
-        url: '/notifications/badges',
-        icon: 'icon-bell'
-      },
-      {
-        name: 'Modals',
-        url: '/notifications/modals',
-        icon: 'icon-bell'
-      }
-    ]
-  },
-  {
-    name: 'Widgets',
-    url: '/widgets',
-    icon: 'icon-calculator',
-    badge: {
-      variant: 'info',
-      text: 'NEW'
-    }
-  },
-  {
-    divider: true
-  },
-  {
-    title: true,
-    name: 'Extras',
-  },
-  {
-    name: 'Pages',
-    url: '/pages',
-    icon: 'icon-star',
-    children: [
-      {
-        name: 'Login',
-        url: '/login',
-        icon: 'icon-star'
-      },
-      {
-        name: 'Register',
-        url: '/register',
-        icon: 'icon-star'
-      },
-      {
-        name: 'Error 404',
-        url: '/404',
-        icon: 'icon-star'
-      },
-      {
-        name: 'Error 500',
-        url: '/500',
-        icon: 'icon-star'
-      }
-    ]
-  },
-  {
-    name: 'Disabled',
-    url: '/dashboard',
-    icon: 'icon-ban',
-    badge: {
-      variant: 'secondary',
-      text: 'NEW'
-    },
-    attributes: { disabled: true },
-  },
-  {
-    name: 'Download CoreUI',
-    url: 'http://coreui.io/angular/',
-    icon: 'icon-cloud-download',
-    class: 'mt-auto',
-    variant: 'success',
-    attributes: { target: '_blank', rel: 'noopener' }
-  },
-  {
-    name: 'Try CoreUI PRO',
-    url: 'http://coreui.io/pro/angular/',
-    icon: 'icon-layers',
-    variant: 'danger',
-    attributes: { target: '_blank', rel: 'noopener' }
   }
 ];

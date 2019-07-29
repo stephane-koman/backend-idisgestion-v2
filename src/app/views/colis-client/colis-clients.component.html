@@ -1,0 +1,343 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <!-- Nav tabs -->
+      <tabset #staticTabs>
+        <tab (selectTab)="onSelect($event)" id="liste-colis">
+          <ng-template tabHeading><i class="icon-bag"></i> Colis</ng-template>
+          <div class="card">
+            <div class="card-header">
+              <button class="btn btn-light float-right" (click)="reload()"><i class="fa fa-refresh"></i> Actualiser
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Référence</span>
+                    </div>
+                    <input (keyup)="searchReference()" class="form-control" type="text"
+                           [(ngModel)]="reference">
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Destinataire</span>
+                    </div>
+                    <input (keyup)="searchNomDestinataire()" class="form-control" type="text"
+                           [(ngModel)]="nomDestinataire">
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="allColis?.colis">
+                <table class="table table-condensed table-bordered data-table" [mfData]="allColis?.colis"
+                       #mf="mfDataTable" [mfRowsOnPage]="size">
+                  <thead>
+                  <tr>
+                    <th style="width: 30%" class="text-center">
+                      <mfDefaultSorter by="reference" [mfShowSortableArrows]="true">Référence</mfDefaultSorter>
+                    </th>
+                    <th style="width: 30%" class="text-center">
+                      <mfDefaultSorter by="destinataire" [mfShowSortableArrows]="false">Destinataire
+                      </mfDefaultSorter>
+                    </th>
+                    <th style="width: 30%" class="text-center">
+                      <mfDefaultSorter by="valeurColis" [mfShowSortableArrows]="true">Valeur</mfDefaultSorter>
+                    </th>
+                    <th style="width: 10%" class="text-center">
+                      <mfDefaultSorter>Actions</mfDefaultSorter>
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let colis of mf.data; let i = index">
+                    <td>{{colis.reference}}</td>
+                    <td>{{colis.nomDestinataire}}</td>
+                    <td>{{colis.valeurColis}}</td>
+                    <td class="text-center">
+                      <button class="btn btn-light" placement="top" tooltip="Afficher" (click)="showForm(colis)"
+                      ><i
+                        class="fa fa-eye"></i></button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="allColis?.colis.length === 0">
+                    <td colspan="5" class="text-center">Aucun resultat trouvé</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <app-pagination
+                  [pages]="pages"
+                  [nombreElements]="allColis?.nombreColis"
+                  [totalElements]="allColis?.totalColis"
+                  [totalPages]="allColis?.totalPages"
+                  [currentPage]="currentPage"
+                  [size]="size"
+                  [page]="page"
+                  (search)="searchPage($event)"
+                  (limit)="searchLimit($event)"
+                  (first)="firstPage($event)"
+                  (next)="nextPage($event)"
+                  (previous)="previousPage($event)"
+                  (last)="lastPage($event)"
+                ></app-pagination>
+              </div>
+
+            </div>
+          </div>
+        </tab>
+        <tab (selectTab)="onSelect($event)" id="creer-colis">
+          <ng-template tabHeading>
+            <span *ngIf="type === 's'" class="show">
+              <i class="fa fa-eye"></i> Afficher colis
+            </span>
+          </ng-template>
+          <form [formGroup]="colisForm" novalidate>
+            <div class="card">
+              <div class="card-header" *ngIf="type === 's'">
+                <ul class="timeline" id="timeline">
+                  <li class="li" [ngClass]="{'complete': colis?.enregistrementColis !== null}">
+                    <div class="timestamp">
+                      <span class="author">{{colis?.enregistrementColis?.utilisateur?.personne?.raisonSociale}}</span>
+                      <span class="date">{{colis?.enregistrementColis?.dateEnregistrement | date: 'dd/MM/yyyy'}}</span>
+                    </div>
+                    <div class="status">
+                      <h4>Enregistrement</h4>
+                    </div>
+                  </li>
+                  <li class="li" [ngClass]="{'complete': colis?.expeditionColis !== null}">
+                    <div class="timestamp">
+                      <span class="author">{{colis?.expeditionColis?.utilisateur?.personne?.raisonSociale}}</span>
+                      <span class="date">{{colis?.expeditionColis?.dateExpedition | date: 'dd/MM/yyyy'}}</span>
+                    </div>
+                    <div class="status">
+                      <h4>Expédition</h4>
+                    </div>
+                  </li>
+                  <li class="li" [ngClass]="{'complete': colis?.arriveeColis !== null}">
+                    <div class="timestamp">
+                      <span class="author">{{colis?.arriveeColis?.utilisateur?.personne?.raisonSociale}}</span>
+                      <span class="date">{{colis?.arriveeColis?.dateArrivee | date: 'dd/MM/yyyy'}}</span>
+                    </div>
+                    <div class="status">
+                      <h4>Arrivée</h4>
+                    </div>
+                  </li>
+                  <li class="li" [ngClass]="{'complete': colis?.receptionColis !== null}">
+                    <div class="timestamp">
+                      <span class="author">{{colis?.receptionColis?.utilisateur?.personne?.raisonSociale}}</span>
+                      <span class="date">{{colis?.receptionColis?.dateReception | date: 'dd/MM/yyyy'}}</span>
+                    </div>
+                    <div class="status">
+                      <h4>Réception</h4>
+                    </div>
+                  </li>
+                  <li class="li" [ngClass]="{'complete': colis?.livraisonColis !== null}">
+                    <div class="timestamp">
+                      <span class="author">{{colis?.livraisonColis?.utilisateur?.personne?.raisonSociale}}</span>
+                      <span class="date">{{colis?.livraisonColis?.dateLivraison | date: 'dd/MM/yyyy'}}</span>
+                    </div>
+                    <div class="status">
+                      <h4>Livraison</h4>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">COLIS</div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="form-group row col-md-6" *ngIf="type === 'u' || type === 's'">
+                    <label for="reference" class="control-label col-md-4 text-right">Référence</label>
+                    <div class="col-md-8">
+                      <input id="reference" type="text" class="form-control" formControlName="reference">
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="valeur" class="control-label col-md-4 text-right">Valeur</label>
+                    <div class="col-md-8">
+                      <input [ngClass]="{'is-invalid': ((!!colisForm?.controls['valeurColis']?.errors?.required) && (colisForm.controls['valeurColis'].errors && (colisForm.controls['valeurColis'].dirty || colisForm.controls['valeurColis'].touched))),
+                   'is-valid': ((!colisForm?.controls['valeurColis']?.errors?.required) && (!colisForm.controls['valeurColis'].errors && (colisForm.controls['valeurColis'].dirty || colisForm.controls['valeurColis'].touched)))}"
+                             id="valeur" type="number" class="form-control" formControlName="valeurColis">
+                      <div
+                        *ngIf="colisForm.controls['valeurColis'].errors && (colisForm.controls['valeurColis'].dirty || colisForm.controls['valeurColis'].touched)"
+                        class="invalid-perso">
+            <span
+              [hidden]="!colisForm.controls['valeurColis'].errors?.required">La <strong>valeur</strong> est obligatoire.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6" *ngIf="type === 'u' || type === 's'">
+                    <div class="col-md-12 text-center qrCode">
+                      <ngx-qrcode
+                        [qrc-value]="colis?.qrCode"
+                        qrc-class="qrCode"
+                        qrc-errorCorrectionLevel="L">
+                      </ngx-qrcode>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="description" class="control-label col-md-4 text-right">Description</label>
+                    <div class="col-md-8">
+                      <textarea [ngClass]="{'is-invalid': ((!!colisForm?.controls['description']?.errors?.required) && (colisForm.controls['description'].errors && (colisForm.controls['description'].dirty || colisForm.controls['description'].touched))),
+                   'is-valid': ((!colisForm?.controls['description']?.errors?.required) && (!colisForm.controls['description'].errors && (colisForm.controls['description'].dirty || colisForm.controls['description'].touched)))}"
+                                id="description" rows="3" cols="30" class="form-control"
+                                formControlName="description"></textarea>
+                      <div
+                        *ngIf="colisForm.controls['description'].errors && (colisForm.controls['description'].dirty || colisForm.controls['description'].touched)"
+                        class="invalid-perso">
+            <span
+              [hidden]="!colisForm.controls['description'].errors?.required">La <strong>description</strong> est obligatoire.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">DESTINATAIRE</div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="form-group row col-md-6">
+                    <label for="nomDestinataire" class="control-label col-md-4 text-right">Raison sociale</label>
+                    <div class="col-md-8">
+                      <input [ngClass]="{'is-invalid': ((!!colisForm?.controls['nomDestinataire']?.errors?.required) && (colisForm.controls['nomDestinataire'].errors && (colisForm.controls['nomDestinataire'].dirty || colisForm.controls['nomDestinataire'].touched))),
+                   'is-valid': ((!colisForm?.controls['nomDestinataire']?.errors?.required) && (!colisForm.controls['nomDestinataire'].errors && (colisForm.controls['nomDestinataire'].dirty || colisForm.controls['nomDestinataire'].touched)))}"
+                             id="nomDestinataire" type="text" class="form-control" formControlName="nomDestinataire">
+                      <div
+                        *ngIf="colisForm.controls['nomDestinataire'].errors && (colisForm.controls['nomDestinataire'].dirty || colisForm.controls['nomDestinataire'].touched)"
+                        class="invalid-perso">
+            <span
+              [hidden]="!colisForm.controls['nomDestinataire'].errors?.required">Le <strong>destinataire</strong> est obligatoire.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="contactDestinataire" class="control-label col-md-4 text-right">Contact</label>
+                    <div class="col-md-8">
+                      <input [ngClass]="{'is-invalid': (!!colisForm?.controls['contactDestinataire']?.errors?.minlength || !!colisForm?.controls['contactDestinataire']?.errors?.required || !!colisForm?.controls['contactDestinataire']?.errors?.pattern) && (colisForm.controls['contactDestinataire'].errors && (colisForm.controls['contactDestinataire'].dirty || colisForm.controls['contactDestinataire'].touched)),
+               'is-valid': (!colisForm?.controls['contactDestinataire']?.errors?.minlength || !colisForm?.controls['contactDestinataire']?.errors?.required || !colisForm?.controls['contactDestinataire']?.errors?.pattern) && (!colisForm.controls['contactDestinataire'].errors && (colisForm.controls['contactDestinataire'].dirty || colisForm.controls['contactDestinataire'].touched))}"
+                             id="contactDestinataire" type="text" class="form-control"
+                             formControlName="contactDestinataire">
+                      <div
+                        *ngIf="colisForm.controls['contactDestinataire'].errors && (colisForm.controls['contactDestinataire'].dirty || colisForm.controls['contactDestinataire'].touched)"
+                        class="invalid-feedback">
+                        <span
+                          [hidden]="!colisForm.controls['contactDestinataire'].errors?.required">Le <strong>contact</strong> est obligatoire.</span>
+                        <span
+                          [hidden]="!colisForm.controls['contactDestinataire'].errors?.minlength">Le <strong>contact</strong> doit être de 8 chiffres au minimum.</span>
+                        <span
+                          [hidden]="!colisForm.controls['contactDestinataire'].errors?.pattern">Le <strong>contact</strong> est invalide.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="adresseDestinataire" class="control-label col-md-4 text-right">Adresse</label>
+                    <div class="col-md-8">
+                      <textarea [ngClass]="{'is-invalid': (!!colisForm?.controls['adresseDestinataire']?.errors?.required) && (colisForm.controls['adresseDestinataire'].errors && (colisForm.controls['adresseDestinataire'].dirty || colisForm.controls['adresseDestinataire'].touched)),
+                  'is-valid': (!colisForm?.controls['adresseDestinataire']?.errors?.required) && (!colisForm.controls['adresseDestinataire'].errors && (colisForm.controls['adresseDestinataire'].dirty || colisForm.controls['adresseDestinataire'].touched))}"
+                                id="adresseDestinataire" rows="3" cols="30" class="form-control"
+                                formControlName="adresseDestinataire"></textarea>
+                      <div
+                        *ngIf="colisForm.controls['adresseDestinataire'].errors && (colisForm.controls['adresseDestinataire'].dirty || colisForm.controls['adresseDestinataire'].touched)"
+                        class="invalid-feedback">
+          <span
+            [hidden]="!colisForm.controls['adresseDestinataire'].errors?.required">L'<strong>adresse</strong> est obligatoire.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <span>DETAILS COLIS</span>
+              </div>
+              <div class="card-body">
+                <table class="table table-condensed table-bordered data-table">
+                  <thead>
+                  <tr>
+                    <th style="width: 20%" class="text-center">
+                      Designation
+                    </th>
+                    <th style="width: 20%" class="text-center">
+                      Quantité
+                    </th>
+                    <th style="width: 20%" class="text-center">
+                      Poids (Kg)
+                    </th>
+                    <th style="width: 30%" class="text-center">
+                      Description
+                    </th>
+                    <th style="width: 20%" class="text-center" *ngIf="type !== 's'">
+                      Action
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody formArrayName="detailsColis">
+                  <tr *ngFor="let dc of detailsColis?.controls; let i = index;" [formGroupName]="i">
+                    <td>
+                      <input [ngClass]="{'is-invalid': (!!detailsColis?.controls[i].controls['designation']?.errors?.required) && (detailsColis?.controls[i].controls['designation'].errors && (detailsColis?.controls[i].controls['designation'].dirty || detailsColis?.controls[i].controls['designation'].touched)),
+                  'is-valid': (!detailsColis?.controls[i].controls['designation']?.errors?.required) && (!detailsColis?.controls[i].controls['designation'].errors && (detailsColis?.controls[i].controls['designation'].dirty || detailsColis?.controls[i].controls['designation'].touched))}"
+                             formControlName="designation" type="text" class="form-control">
+                      <div
+                        *ngIf="detailsColis?.controls[i].controls['designation'].errors && (detailsColis?.controls[i].controls['designation'].dirty || detailsColis?.controls[i].controls['designation'].touched)"
+                        class="invalid-feedback">
+          <span
+            [hidden]="!detailsColis?.controls[i].controls['designation'].errors?.required">La<strong> designation</strong> est obligatoire.</span>
+                      </div>
+                    </td>
+                    <td>
+                      <input [ngClass]="{'is-invalid': (!!detailsColis?.controls[i].controls['quantite']?.errors?.required) && (detailsColis?.controls[i].controls['quantite'].errors && (detailsColis?.controls[i].controls['quantite'].dirty || detailsColis?.controls[i].controls['quantite'].touched)),
+                  'is-valid': (!detailsColis?.controls[i].controls['quantite']?.errors?.required) && (!detailsColis?.controls[i].controls['quantite'].errors && (detailsColis?.controls[i].controls['quantite'].dirty || detailsColis?.controls[i].controls['quantite'].touched))}"
+                             formControlName="quantite" type="number" class="form-control">
+                      <div
+                        *ngIf="detailsColis?.controls[i].controls['quantite'].errors && (detailsColis?.controls[i].controls['quantite'].dirty || detailsColis?.controls[i].controls['quantite'].touched)"
+                        class="invalid-feedback">
+          <span
+            [hidden]="!detailsColis?.controls[i].controls['quantite'].errors?.required">La<strong> quantite</strong> est obligatoire.</span>
+                      </div>
+                    </td>
+                    <td>
+                      <input [ngClass]="{'is-invalid': (!!detailsColis?.controls[i].controls['poids']?.errors?.required) && (detailsColis?.controls[i].controls['poids'].errors && (detailsColis?.controls[i].controls['poids'].dirty || detailsColis?.controls[i].controls['poids'].touched)),
+                  'is-valid': (!detailsColis?.controls[i].controls['poids']?.errors?.required) && (!detailsColis?.controls[i].controls['poids'].errors && (detailsColis?.controls[i].controls['poids'].dirty || detailsColis?.controls[i].controls['poids'].touched))}"
+                             formControlName="poids" type="number" class="form-control">
+                      <div
+                        *ngIf="detailsColis?.controls[i].controls['poids'].errors && (detailsColis?.controls[i].controls['poids'].dirty || detailsColis?.controls[i].controls['poids'].touched)"
+                        class="invalid-feedback">
+          <span
+            [hidden]="!detailsColis?.controls[i].controls['poids'].errors?.required">Le<strong> poids</strong> est obligatoire.</span>
+                      </div>
+                    </td>
+                    <td>
+                        <textarea [ngClass]="{'is-invalid': (!!detailsColis?.controls[i].controls['description']?.errors?.required) && (detailsColis?.controls[i].controls['description'].errors && (detailsColis?.controls[i].controls['description'].dirty || detailsColis?.controls[i].controls['description'].touched)),
+                  'is-valid': (!detailsColis?.controls[i].controls['description']?.errors?.required) && (!detailsColis?.controls[i].controls['description'].errors && (detailsColis?.controls[i].controls['description'].dirty || detailsColis?.controls[i].controls['description'].touched))}"
+                                  formControlName="description" id="" cols="30" rows="2"
+                                  class="form-control"></textarea>
+                      <div
+                        *ngIf="detailsColis?.controls[i].controls['description'].errors && (detailsColis?.controls[i].controls['description'].dirty || detailsColis?.controls[i].controls['description'].touched)"
+                        class="invalid-feedback">
+          <span
+            [hidden]="!detailsColis?.controls[i].controls['description'].errors?.required">La<strong> description</strong> est obligatoire.</span>
+                      </div>
+                    </td>
+                    <td *ngIf="type !== 's'">
+                      <button class="btn btn-danger" placement="top" tooltip="Supprimer" (click)="deleteDetail(i)">
+                        <i class="fa fa-remove"></i>
+                      </button>
+                    </td>
+
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </form>
+        </tab>
+      </tabset>
+    </div><!--/.col-->
+  </div><!--/.row-->
+</div>

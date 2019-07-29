@@ -1,0 +1,124 @@
+<div class="modal-header modal-primary">
+  <h4 class="modal-title" *ngIf="type === 'i'">Ajouter Utilisateur</h4>
+  <h4 class="modal-title" *ngIf="type === 'u'">Modifier Utilisateur</h4>
+  <h4 class="modal-title" *ngIf="type === 's'">Afficher Utilisateur</h4>
+  <button type="button" class="close" (click)="onCancel()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="card-title" *ngIf="error">
+    <alert class="text-center" [type]="alert.type" [dismissible]="alert.dismissible" (onClose)="dismiss()">
+      <strong>{{error}}</strong>
+    </alert>
+  </div>
+  <form (keyup.enter)="userForm.status==='VALID' ? enterPress() : null" [formGroup]="userForm" novalidate>
+    <div class="form-group row">
+      <label for="username" class="control-label col-md-3">Pseudo</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!userForm?.controls['username']?.errors?.minlength || !!userForm?.controls['username']?.errors?.required) && (userForm.controls['username'].errors && (userForm.controls['username'].dirty || userForm.controls['username'].touched)),
+               'is-valid': (!userForm?.controls['username']?.errors?.minlength || !userForm?.controls['username']?.errors?.required) && (!userForm.controls['username'].errors && (userForm.controls['username'].dirty || userForm.controls['username'].touched))}"
+               id="username" type="text" class="form-control"
+               formControlName="username">
+        <div
+          *ngIf="userForm.controls['username'].errors && (userForm.controls['username'].dirty || userForm.controls['username'].touched)"
+          class="invalid-feedback">
+          <span [hidden]="!userForm.controls['username'].errors?.required">Le <strong>pseudo</strong> est obligatoire.</span>
+          <span [hidden]="!userForm.controls['username'].errors?.minlength">Le <strong>pseudo</strong> doit être de 4 caractères au minimum.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="password" class="control-label  col-md-3">Mot de passe</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!userForm?.controls['password']?.errors?.minlength || !!userForm?.controls['password']?.errors?.required) && (userForm.controls['password'].errors && (userForm.controls['password'].dirty || userForm.controls['password'].touched)),
+               'is-valid': (!userForm?.controls['password']?.errors?.minlength || !userForm?.controls['password']?.errors?.required) && (!userForm.controls['password'].errors && (userForm.controls['password'].dirty || userForm.controls['password'].touched))}"
+               id="password" type="password" class="form-control"
+               formControlName="password">
+        <div
+          *ngIf="userForm.controls['password'].errors && (userForm.controls['password'].dirty || userForm.controls['password'].touched)"
+          class="invalid-feedback">
+          <span [hidden]="!userForm.controls['password'].errors?.required">Le <strong>mot de passe</strong> est obligatoire.</span>
+          <span [hidden]="!userForm.controls['password'].errors?.minlength">Le <strong>mot de passe</strong> doit être de 4 caractères au minimum.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="repassword" class="control-label  col-md-3">Repétez mot de passe</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!userForm?.controls['repassword']?.errors?.MatchPassword || !!userForm?.controls['repassword']?.errors?.required) && (userForm.controls['repassword'].errors && (userForm.controls['repassword'].dirty || userForm.controls['repassword'].touched)),
+               'is-valid': (!userForm?.controls['repassword']?.errors?.MatchPassword || !userForm?.controls['repassword']?.errors?.required) && (!userForm.controls['repassword'].errors && (userForm.controls['repassword'].dirty || userForm.controls['repassword'].touched))}"
+               id="repassword" type="password" class="form-control"
+               formControlName="repassword">
+        <div
+          *ngIf="userForm.controls['repassword'].errors && (userForm.controls['repassword'].dirty || userForm.controls['repassword'].touched)"
+          class="invalid-feedback">
+          <span [hidden]="!userForm.controls['repassword'].errors?.MatchPassword">Les <strong>mots de passe</strong>  doivent être identiques.</span>
+          <span [hidden]="!userForm.controls['repassword'].errors?.required">Le <strong>champ</strong>  est obligatoire.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="roles" class="control-label col-md-3">Rôles</label>
+      <div class="col-md-9">
+        <ng-select [ngClass]="{'is-invalid': ((!!userForm?.controls['roles']?.errors?.required) && (userForm.controls['roles'].errors && (userForm.controls['roles'].dirty || userForm.controls['roles'].touched))) || ((!!userForm?.controls['roles']?.errors?.required) && (hasClientAndOther)),
+                   'is-valid': ((!userForm?.controls['roles']?.errors?.required) && (!userForm.controls['roles'].errors && (userForm.controls['roles'].dirty || userForm.controls['roles'].touched)))}"
+                   id="roles" class="form-control" *ngIf="allRoles?.length > 0"
+                   [items]="allRoles"
+                   multiple="true"
+                   bindLabel="roleName"
+                   formControlName="roles"
+                   (change)="changePersonne($event)"
+                   placeholder="Aucun rôle sélectionné">
+        </ng-select>
+        <div
+          *ngIf="userForm.controls['roles'].errors && (userForm.controls['roles'].dirty || userForm.controls['roles'].touched)"
+          class="invalid-perso">
+          <span [hidden]="!userForm.controls['roles'].errors?.required">Le <strong>rôle</strong> est obligatoire.</span>
+        </div>
+        <div
+          *ngIf="hasClientAndOther" class="invalid-perso">
+          <span>Le rôle <strong>client</strong> ne peut être combiner à un autre rôle.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row" *ngIf="allPersonnes?.length > 0 && typeUser">
+      <label for="personne" class="control-label col-md-3"><span *ngIf="typeUser === 'client'">Client</span><span *ngIf="typeUser === 'employe'">Employe</span></label>
+      <div class="col-md-9">
+        <ng-select [ngClass]="{'is-invalid': ((!!userForm?.controls['personne']?.errors?.required) && (userForm.controls['personne'].errors && (userForm.controls['personne'].dirty || userForm.controls['personne'].touched))) || (hasClientAndOther),
+                   'is-valid': ((!userForm?.controls['personne']?.errors?.required) && (!userForm.controls['personne'].errors && (userForm.controls['personne'].dirty || userForm.controls['personne'].touched))  && (!hasClientAndOther))}"
+                   id="personne" class="form-control" *ngIf="allPersonnes?.length > 0"
+                   [items]="allPersonnes"
+                   bindLabel="raisonSociale"
+                   formControlName="personne"
+                   placeholder="Aucune personne sélectionnée">
+          <ng-template ng-label-tmp let-item="item">
+            <b>{{item?.matricule}}</b><b>{{item?.codeClient}}</b> || {{item?.raisonSociale}}
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item">
+            <b>{{item?.matricule}}</b><b>{{item?.codeClient}}</b> || {{item?.raisonSociale}}
+          </ng-template>
+        </ng-select>
+        <div
+          *ngIf="userForm.controls['personne'].errors && (userForm.controls['personne'].dirty || userForm.controls['personne'].touched)"
+          class="invalid-perso">
+          <span [hidden]="!userForm.controls['personne'].errors?.required">Veuillez sélectionner une <strong>personne</strong>.</span>
+        </div>
+      </div>
+    </div>
+    <input id="id" type="hidden" formControlName="id">
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Fermer</button>
+  <button *ngIf="type === 'i'" [ladda]="isLoading" type="button" class="btn btn-primary"
+          [disabled]='userForm.status==="INVALID"'
+          (click)="saveUser()">
+    Enregistrer
+  </button>
+  <button *ngIf="type === 'u'" [ladda]="isLoading" type="button" class="btn btn-warning"
+          [disabled]='userForm.status==="INVALID"'
+          (click)="updateUser()">
+    Modifier
+  </button>
+</div>

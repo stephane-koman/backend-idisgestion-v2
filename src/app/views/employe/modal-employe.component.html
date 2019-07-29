@@ -1,0 +1,141 @@
+<div class="modal-header modal-primary">
+  <h4 class="modal-title" *ngIf="type === 'i'">Ajouter Employe</h4>
+  <h4 class="modal-title" *ngIf="type === 'u'">Modifier Employe</h4>
+  <h4 class="modal-title" *ngIf="type === 's'">Afficher Employe</h4>
+  <button type="button" class="close" (click)="onCancel()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="card-title" *ngIf="error">
+    <alert class="text-center" [type]="alert.type" [dismissible]="alert.dismissible" (onClose)="dismiss()">
+      <strong>{{error}}</strong>
+    </alert>
+  </div>
+  <form (keyup.enter)="employeForm.status==='VALID' ? enterPress() : null" [formGroup]="employeForm" novalidate>
+    <div class="row">
+      <div class="form-group row col-md-6" *ngIf="type === 'u' || type === 's'">
+        <label for="matricule" class="control-label col-md-3">matricule</label>
+        <div class="col-md-9">
+          <input id="matricule" type="text" class="form-control"
+                 formControlName="matricule">
+        </div>
+      </div>
+      <div class="form-group row col-md-6">
+        <label for="raisonSociale" class="control-label col-md-3">Nom & Prénom(s)</label>
+        <div class="col-md-9">
+          <input [ngClass]="{'is-invalid': (!!employeForm?.controls['raisonSociale']?.errors?.minlength || !!employeForm?.controls['raisonSociale']?.errors?.required) && (employeForm.controls['raisonSociale'].errors && (employeForm.controls['raisonSociale'].dirty || employeForm.controls['raisonSociale'].touched)),
+               'is-valid': (!employeForm?.controls['raisonSociale']?.errors?.minlength || !employeForm?.controls['raisonSociale']?.errors?.required) && (!employeForm.controls['raisonSociale'].errors && (employeForm.controls['raisonSociale'].dirty || employeForm.controls['raisonSociale'].touched))}"
+                 id="raisonSociale" type="text" class="form-control"
+                 formControlName="raisonSociale">
+          <div
+            *ngIf="employeForm.controls['raisonSociale'].errors && (employeForm.controls['raisonSociale'].dirty || employeForm.controls['raisonSociale'].touched)"
+            class="invalid-feedback">
+            <span [hidden]="!employeForm.controls['raisonSociale'].errors?.required">Le <strong>nom</strong> est obligatoire.</span>
+            <span [hidden]="!employeForm.controls['raisonSociale'].errors?.minlength">Le <strong>nom</strong> doit être de 4 caractères au minimum.</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row col-md-6">
+        <label for="fonction" class="control-label col-md-3">Fonction</label>
+        <div class="col-md-9">
+          <ng-select [ngClass]="{'is-invalid': (!!employeForm?.controls['fonction']?.errors?.required) && (employeForm.controls['fonction'].errors && (employeForm.controls['fonction'].dirty || employeForm.controls['fonction'].touched)),
+                   'is-valid': (!employeForm?.controls['fonction']?.errors?.required) && (!employeForm.controls['fonction'].errors && (employeForm.controls['fonction'].dirty || employeForm.controls['fonction'].touched))}"
+                     id="fonction" class="form-control" *ngIf="allFonctions?.length > 0"
+                     [items]="allFonctions"
+                     bindLabel="nomFonction"
+                     formControlName="fonction"
+                     placeholder="Aucune fonction sélectionnée">
+          </ng-select>
+          <div
+            *ngIf="employeForm.controls['fonction'].errors && (employeForm.controls['fonction'].dirty || employeForm.controls['fonction'].touched)"
+            class="invalid-perso">
+            <span
+              [hidden]="!employeForm.controls['fonction'].errors?.required">La <strong>fonction</strong> est obligatoire.</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row col-md-6">
+        <label for="site" class="control-label col-md-3">Site</label>
+        <div class="col-md-9">
+          <ng-select [ngClass]="{'is-invalid': (!!employeForm?.controls['site']?.errors?.required) && (employeForm.controls['site'].errors && (employeForm.controls['site'].dirty || employeForm.controls['site'].touched)),
+                   'is-valid': (!employeForm?.controls['site']?.errors?.required) && (!employeForm.controls['site'].errors && (employeForm.controls['site'].dirty || employeForm.controls['site'].touched))}"
+                     id="site" class="form-control" *ngIf="allSites?.length > 0"
+                     [items]="allSites"
+                     bindLabel="nomSite"
+                     formControlName="site"
+                     placeholder="Aucun site sélectionné">
+          </ng-select>
+          <div
+            *ngIf="employeForm.controls['site'].errors && (employeForm.controls['site'].dirty || employeForm.controls['site'].touched)"
+            class="invalid-perso">
+            <span
+              [hidden]="!employeForm.controls['site'].errors?.required">Le <strong>site</strong> est obligatoire.</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row col-md-6">
+        <label for="raisonSociale" class="control-label col-md-3">Contact</label>
+        <div class="col-md-9">
+          <input [ngClass]="{'is-invalid': (!!employeForm?.controls['contact']?.errors?.minlength || !!employeForm?.controls['contact']?.errors?.required || !!employeForm?.controls['contact']?.errors?.pattern) && (employeForm.controls['contact'].errors && (employeForm.controls['contact'].dirty || employeForm.controls['contact'].touched)),
+               'is-valid': (!employeForm?.controls['contact']?.errors?.minlength || !employeForm?.controls['contact']?.errors?.required || !employeForm?.controls['contact']?.errors?.pattern) && (!employeForm.controls['contact'].errors && (employeForm.controls['contact'].dirty || employeForm.controls['contact'].touched))}"
+                 id="contact" type="tel" class="form-control"
+                 formControlName="contact">
+          <div
+            *ngIf="employeForm.controls['contact'].errors && (employeForm.controls['contact'].dirty || employeForm.controls['contact'].touched)"
+            class="invalid-feedback">
+            <span [hidden]="!employeForm.controls['contact'].errors?.required">Le <strong>contact</strong> est obligatoire.</span>
+            <span [hidden]="!employeForm.controls['contact'].errors?.minlength">Le <strong>contact</strong> doit être de 8 chiffres au minimum.</span>
+            <span
+              [hidden]="!employeForm.controls['contact'].errors?.pattern">Le <strong>contact</strong> est invalide.</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row col-md-6">
+        <label for="email" class="control-label col-md-3">Email</label>
+        <div class="col-md-9">
+          <input [ngClass]="{'is-invalid': (!!employeForm?.controls['email']?.errors?.email || !!employeForm?.controls['email']?.errors?.required) && (employeForm.controls['email'].errors && (employeForm.controls['email'].dirty || employeForm.controls['email'].touched)),
+               'is-valid': (!employeForm?.controls['email']?.errors?.email || !employeForm?.controls['email']?.errors?.required) && (!employeForm.controls['email'].errors && (employeForm.controls['email'].dirty || employeForm.controls['email'].touched))}"
+                 id="email" type="email" class="form-control"
+                 formControlName="email">
+          <div
+            *ngIf="employeForm.controls['email'].errors && (employeForm.controls['email'].dirty || employeForm.controls['email'].touched)"
+            class="invalid-feedback">
+          <span
+            [hidden]="!employeForm.controls['email'].errors?.required">L'<strong>email</strong> est obligatoire.</span>
+            <span [hidden]="!employeForm.controls['email'].errors?.email">L'<strong>email</strong> est invalide.</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row col-md-6">
+        <label for="adresse" class="control-label col-md-3">Adresse</label>
+        <div class="col-md-9">
+        <textarea [ngClass]="{'is-invalid': (!!employeForm?.controls['adresse']?.errors?.required) && (employeForm.controls['adresse'].errors && (employeForm.controls['adresse'].dirty || employeForm.controls['adresse'].touched)),
+                  'is-valid': (!employeForm?.controls['adresse']?.errors?.required) && (!employeForm.controls['adresse'].errors && (employeForm.controls['adresse'].dirty || employeForm.controls['adresse'].touched))}"
+                  icols="30" rows="2" id="adresse" class="form-control"
+                  formControlName="adresse"></textarea>
+          <div
+            *ngIf="employeForm.controls['adresse'].errors && (employeForm.controls['adresse'].dirty || employeForm.controls['adresse'].touched)"
+            class="invalid-feedback">
+          <span
+            [hidden]="!employeForm.controls['adresse'].errors?.required">L'<strong>adresse</strong> est obligatoire.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input id="id" type="hidden" formControlName="id">
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Fermer</button>
+  <button *ngIf="type === 'i'" [ladda]="isLoading" type="button" class="btn btn-primary"
+          [disabled]='employeForm.status==="INVALID"'
+          (click)="saveEmploye()">
+    Enregistrer
+  </button>
+  <button *ngIf="type === 'u'" [ladda]="isLoading" type="button" class="btn btn-warning"
+          [disabled]='employeForm.status==="INVALID"'
+          (click)="updateEmploye()">
+    Modifier
+  </button>
+</div>

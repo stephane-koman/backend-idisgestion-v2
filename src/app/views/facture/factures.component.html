@@ -1,0 +1,454 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="col-md-12">
+        <ngx-spinner
+                bdColor="rgba(51,51,51,0.8)"
+                size="medium"
+                color="#fff"
+                type="ball-scale-multiple">
+        </ngx-spinner>
+        <div class="card" *ngIf="print">
+
+          <div class="card-header">
+            <button class="btn btn-light float-right" (click)="hidePrint()"><i class="fa fa-close"></i> Fermer
+            </button>
+          </div>
+          <div class="card-body" style="width: 100%; height: 500px">
+
+            <ng2-pdfjs-viewer #externalPdfViewer [showSpinner]="true"></ng2-pdfjs-viewer>
+          </div>
+        </div>
+      </div>
+      <!-- Nav tabs -->
+      <tabset #staticTabs *ngIf="!print">
+        <tab (selectTab)="onSelect($event)" id="liste-facture">
+          <ng-template tabHeading>
+            <span class="font-weight-bold">
+              <i class="icon-bag font-weight-bold"></i> Facture
+            </span>
+          </ng-template>
+          <div class="card">
+            <div class="card-header">
+              <button class="btn btn-light float-right" (click)="reload()"><i class="fa fa-refresh"></i> Actualiser
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Numéro</span>
+                    </div>
+                    <input (keyup)="searchNumeroFacture()" class="form-control" type="text"
+                           [(ngModel)]="numeroFacture">
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Colis</span>
+                    </div>
+                    <input (keyup)="searchReferenceColis()" class="form-control" type="text"
+                           [(ngModel)]="referenceColis">
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">Type</span>
+                    </div>
+                    <ng-select class="form-control"
+                               [items]="allTypesFactures"
+                               bindLabel="nomTypeFacture"
+                               (change)="searchNomTypeFacture($event)"
+                               placeholder="Aucun type sélectionné">
+                      <ng-template ng-label-tmp let-item="item">
+                        {{item?.nomTypeFacture | uppercase}}
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item">
+                        {{item?.nomTypeFacture | uppercase}}
+                      </ng-template>
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text text-color-blue">Statut</span>
+                    </div>
+                    <ng-select [clearable]="false" class="form-control" [(ngModel)]="enable" (change)="searchStatut()">
+                      <ng-option [value]="2">Tout</ng-option>
+                      <ng-option [value]="1">Actif</ng-option>
+                      <ng-option [value]="0">Inactif</ng-option>
+                    </ng-select>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="allFactures?.factures">
+                <table class="table table-condensed table-bordered data-table" [mfData]="allFactures?.factures"
+                       #mf="mfDataTable" [mfRowsOnPage]="size">
+                  <thead>
+                  <tr>
+                    <th style="width: 15%" class="text-center">
+                      <mfDefaultSorter by="numeroFacture" [mfShowSortableArrows]="true">Numéro</mfDefaultSorter>
+                    </th>
+                    <th style="width: 10%" class="text-center">
+                      <mfDefaultSorter by="typeFacture" [mfShowSortableArrows]="false">Type
+                      </mfDefaultSorter>
+                    </th>
+                    <th style="width: 15%" class="text-center">
+                      <mfDefaultSorter by="client" [mfShowSortableArrows]="false">Client
+                      </mfDefaultSorter>
+                    </th>
+                    <th style="width: 15%" class="text-center">
+                      <mfDefaultSorter by="colis" [mfShowSortableArrows]="true">Colis</mfDefaultSorter>
+                    </th>
+                    <th style="width: 15%" class="text-center">
+                      <mfDefaultSorter by="debit" [mfShowSortableArrows]="true">Débit</mfDefaultSorter>
+                    </th>
+                    <th style="width: 15%" class="text-center">
+                      <mfDefaultSorter by="credit" [mfShowSortableArrows]="true">Crédit</mfDefaultSorter>
+                    </th>
+                    <th style="width: 15%" class="text-center">
+                      <mfDefaultSorter>Actions</mfDefaultSorter>
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let facture of mf.data; let i = index">
+                    <td class="font-weight-bold">{{facture?.numeroFacture}}</td>
+                    <td>{{facture?.typeFacture?.nomTypeFacture | uppercase}}</td>
+                    <td>{{facture?.colis?.client?.raisonSociale | uppercase}}</td>
+                    <td>{{facture?.colis?.reference}}</td>
+                    <td class="text-right font-weight-bold">{{facture?.debit}}
+                      {{user?.personne?.site?.devise?.nomDevise}}
+                    </td>
+                    <td class="text-right font-weight-bold">{{facture?.credit}}
+                      {{user?.personne?.site?.devise?.nomDevise}}
+                    </td>
+                    <td class="text-center">
+                      <div class="btn-group" dropdown [dropup]="false">
+                        <button id="button-basic" dropdownToggle type="button" class="btn btn-light dropdown-toggle"
+                                aria-controls="dropdown-basic">
+                          Sélectionner <span class="caret"></span>
+                        </button>
+                        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+                            role="menu" aria-labelledby="button-basic">
+                          <li role="menuitem"><a class="dropdown-item text-warning font-weight-bold"
+                                                 (click)="editForm(facture)">
+                            <i class="fa fa-edit text-warning font-weight-bold"></i> Modifier</a>
+                          </li>
+                          <li role="menuitem"><a class="dropdown-item text-default font-weight-bold"
+                                                 (click)="showForm(facture)"><i
+                            class="fa fa-eye text-default font-weight-bold"></i> Afficher</a></li>
+                          <li role="menuitem"><a class="dropdown-item text-danger font-weight-bold"
+                                                 (click)="downloadFacture(facture)"><i
+                                  class="fa fa-file-pdf-o text-danger font-weight-bold"></i> PDF</a></li>
+                          <li role="menuitem"><a class="dropdown-item text-danger font-weight-bold"
+                                                 *ngIf="facture.enable === 1"
+                                                 (click)="openRemoveModal(facture, 'd', i)"><i
+                            class="fa fa-lock text-danger font-weight-bold"></i>
+                            Désactiver</a></li>
+                          <li role="menuitem"><a class="dropdown-item text-success font-weight-bold"
+                                                 *ngIf="facture.enable === 0"
+                                                 (click)="openRemoveModal(facture, 'e', i)"><i
+                            class="fa fa-unlock-alt text-success font-weight-bold"></i> Activer</a></li>
+
+                          <li class="divider dropdown-divider"></li>
+                          <li role="menuitem"><a class="dropdown-item text-danger font-weight-bold"
+                                                 (click)="openRemoveModal(facture, 'r', i)"><i
+                            class="fa fa-remove text-danger font-weight-bold"></i> Supprimer</a></li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="allFactures?.factures.length === 0">
+                    <td colspan="7" class="text-center">Aucun resultat trouvé</td>
+                  </tr>
+                  </tbody>
+                </table>
+                <app-pagination
+                  [pages]="pages"
+                  [nombreElements]="allFactures?.nombreFactures"
+                  [totalElements]="allFactures?.totalFactures"
+                  [totalPages]="allFactures?.totalPages"
+                  [currentPage]="currentPage"
+                  [size]="size"
+                  [page]="page"
+                  (search)="searchPage($event)"
+                  (limit)="searchLimit($event)"
+                  (first)="firstPage($event)"
+                  (next)="nextPage($event)"
+                  (previous)="previousPage($event)"
+                  (last)="lastPage($event)"
+                ></app-pagination>
+              </div>
+
+            </div>
+          </div>
+        </tab>
+        <tab (selectTab)="onSelect($event)" id="creer-facture">
+          <ng-template tabHeading>
+            <span *ngIf="type === 'i'" class="new">
+              <i class="fa fa-plus"></i> Créer facture
+            </span>
+            <span *ngIf="type === 'u'" class="update">
+              <i class="fa fa-edit"></i> Modifier facture
+            </span>
+            <span *ngIf="type === 's'" class="show">
+              <i class="fa fa-eye"></i> Afficher facture
+            </span>
+          </ng-template>
+          <div class="card-title" *ngIf="error">
+            <alert class="text-center" [type]="alert.type" [dismissible]="alert.dismissible" (onClose)="dismiss()">
+              <strong>{{error}}</strong>
+            </alert>
+          </div>
+          <form [formGroup]="factureForm" novalidate>
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <input id="id" type="hidden" formControlName="id">
+                  <div class="form-group row col-md-6">
+                    <label for="typeFacture" class="control-label col-md-4 text-right">Type</label>
+                    <div class="col-md-8">
+                      <ng-select [ngClass]="{'is-invalid': ((!!factureForm?.controls['typeFacture']?.errors?.required) && (factureForm.controls['typeFacture'].errors && (factureForm.controls['typeFacture'].dirty || factureForm.controls['typeFacture'].touched))),
+                   'is-valid': ((!factureForm?.controls['typeFacture']?.errors?.required) && (!factureForm.controls['typeFacture'].errors && (factureForm.controls['typeFacture'].dirty || factureForm.controls['typeFacture'].touched)))}"
+                                 id="typeFacture" class="form-control" *ngIf="allTypesFactures?.length > 0"
+                                 [items]="allTypesFactures"
+                                 bindLabel="nomTypeFacture"
+                                 (change)="getNomTypeFacture($event)"
+                                 formControlName="typeFacture"
+                                 placeholder="Aucun type sélectionnée">
+                        <ng-template ng-label-tmp let-item="item">
+                          {{item?.nomTypeFacture | uppercase}}
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item">
+                          {{item?.nomTypeFacture | uppercase}}
+                        </ng-template>
+                      </ng-select>
+                      <div
+                        *ngIf="factureForm.controls['typeFacture'].errors && (factureForm.controls['typeFacture'].dirty || factureForm.controls['typeFacture'].touched)"
+                        class="invalid-perso">
+                        <span
+                          [hidden]="!factureForm.controls['typeFacture'].errors?.required">Veuillez sélectionner un <strong>type</strong>.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="colis" class="control-label col-md-4 text-right">Colis</label>
+                    <div class="col-md-8">
+                      <ng-select [ngClass]="{'is-invalid': (!!factureForm?.controls['colis']?.errors?.required) && (factureForm.controls['colis'].errors && (factureForm.controls['colis'].dirty || factureForm.controls['colis'].touched)),
+                   'is-valid': (!factureForm?.controls['colis']?.errors?.required) && (!factureForm.controls['colis'].errors && (factureForm.controls['colis'].dirty || factureForm.controls['colis'].touched))}"
+                                 id="colis" class="form-control"
+                                 [items]="allColis"
+                                 bindLabel="reference"
+                                 (change)="searchNomColis($event)"
+                                 (search)="getSendColisByReference($event)"
+                                 formControlName="colis"
+                                 placeholder="Aucun colis sélectionné">
+                      </ng-select>
+                      <div
+                        *ngIf="factureForm.controls['colis'].errors && (factureForm.controls['colis'].dirty || factureForm.controls['colis'].touched)"
+                        class="invalid-perso">
+            <span
+              [hidden]="!factureForm.controls['colis'].errors?.required">Le <strong>colis</strong> est obligatoire.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6" *ngIf="type === 'u' || type === 's'">
+                    <label for="numeroFacture" class="control-label col-md-4 text-right">Numéro</label>
+                    <div class="col-md-8">
+                      <input id="numeroFacture" type="text" class="form-control" formControlName="numeroFacture">
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6" *ngIf="!showBtn">
+                    <label for="dateEcheance" class="control-label col-md-4 text-right">Date Echéance</label>
+                    <div class="col-md-8">
+                      <input [ngClass]="{'is-invalid': (!!factureForm?.controls['dateEcheance']?.errors?.required || !!factureForm?.controls['dateEcheance']?.errors?.matchDate) && (factureForm.controls['dateEcheance'].errors && (factureForm.controls['dateEcheance'].dirty || factureForm.controls['dateEcheance'].touched)),
+                            'is-valid': (!factureForm?.controls['dateEcheance']?.errors?.required || !factureForm?.controls['dateEcheance']?.errors?.matchDate) && (!factureForm.controls['dateEcheance'].errors && (factureForm.controls['dateEcheance'].dirty || factureForm.controls['dateEcheance'].touched))}"
+                             id="dateEcheance" placeholder="Aucune date sélectionnée" type="text" class="form-control"
+                             bsDatepicker formControlName="dateEcheance" [bsConfig]="bsConfig">
+
+                     <div
+                        *ngIf="factureForm.controls['dateEcheance'].errors && (factureForm.controls['dateEcheance'].dirty || factureForm.controls['dateEcheance'].touched)"
+                        class="invalid-perso">
+                       <span
+                         [hidden]="!factureForm.controls['dateEcheance'].errors?.required">La <strong>date d'échéance</strong> est obligatoire.</span>
+            <!--<span
+              [hidden]="!factureForm.controls['dateEcheance'].errors?.matchDate">La <strong>date d'échéance</strong> ne peut être inférieure à la date actuelle.</span>-->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card" *ngIf="colis">
+              <div class="card-header">COLIS</div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="form-group row col-md-6">
+                    <label for="client" class="control-label col-md-4 text-right">Expéditeur</label>
+                    <div class="col-md-8">
+                      <input id="client" type="text" class="form-control" [value]="colis?.client?.raisonSociale"
+                             disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="nomDestinataire" class="control-label col-md-4 text-right">Destinataire</label>
+                    <div class="col-md-8">
+                      <input id="nomDestinataire" type="text" class="form-control" [value]="colis?.nomDestinataire"
+                             disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <div class="col-md-12 text-center qrCode">
+                      <ngx-qrcode disabled
+                                  [qrc-value]="colis?.qrCode"
+                                  qrc-class="qrCode"
+                                  qrc-errorCorrectionLevel="L">
+                      </ngx-qrcode>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6">
+                    <label for="description" class="control-label col-md-4 text-right">Description</label>
+                    <div class="col-md-8">
+                      <textarea id="description" rows="3" cols="30" class="form-control"
+                                disabled>{{colis?.description}}</textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">LIGNES FACTURES</div>
+              <div class="card-body ligne-facture">
+                <table class="table table-condensed data-table">
+                  <thead>
+                  <tr>
+                    <th style="width: 20%" class="text-center">
+                      Designation
+                    </th>
+                    <th style="width: 15%" class="text-center">
+                      Quantité
+                    </th>
+                    <th style="width: 15%" class="text-center">
+                      Poids (Kg)
+                    </th>
+                    <th style="width: 20%" class="text-center">
+                      Prix Unitaire
+                    </th>
+                    <th style="width: 20%" class="text-center">
+                      Prix Total
+                    </th>
+                    <th style="width: 10%" class="text-center" *ngIf="showBtn === true && type !== 's'">
+                      Action
+                    </th>
+                  </tr>
+                  </thead>
+                  <tbody formArrayName="ligneFactures">
+                  <tr *ngFor="let lf of ligneFactures?.controls; let i = index;" [formGroupName]="i">
+                    <td>
+                      <input formControlName="designation" type="text" class="form-control">
+                    </td>
+                    <td>
+                      <input formControlName="quantite" type="number" class="form-control text-right">
+                    </td>
+                    <td>
+                      <input formControlName="poids" type="number" class="form-control text-right">
+                    </td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input formControlName="prixUnitaire" type="number" class="form-control text-right"
+                               (change)="prixUnitaire($event, i)">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input formControlName="prixTotal" type="number" class="form-control text-right">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td *ngIf="showBtn === true && type !== 's'" class="text-center">
+                      <button class="btn btn-danger" placement="top" tooltip="Supprimer"
+                              (click)="deleteligneFacture(i)">
+                        <i class="fa fa-remove"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="colis?.detailsColis && ligneFactures?.controls.length > 0">
+                    <td colspan="4" class="text-right font-weight-bold">Montant HT</td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input type="number" class="form-control text-right font-weight-bold" disabled [value]="montantHT">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td *ngIf="showBtn === true && type !== 's'"></td>
+                  </tr>
+                  <tr *ngIf="colis?.detailsColis  && ligneFactures?.controls.length > 0" class="tva">
+                    <!--<td class="text-left">
+                      <div class="form-check font-weight-bold">
+                        <input (change)="changeTva(exonereTva)" class="form-check-input" type="checkbox" [value]="exonereTva" id="exonere">
+                        <label class="form-check-label" for="exonere">
+                          Exonéré
+                        </label>
+                      </div>
+                    </td>-->
+                    <td colspan="4" class="text-right font-weight-bold">TVA</td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input type="number" class="form-control text-right" disabled [value]="tva*100">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">%</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td *ngIf="showBtn === true && type !== 's'"></td>
+                  </tr>
+                  <tr *ngIf="colis?.detailsColis && ligneFactures?.controls.length > 0">
+                    <td colspan="4" class="text-right font-weight-bold">Montant TTC</td>
+                    <td>
+                      <div class="input-group mb-4">
+                        <input type="number" class="form-control text-right font-weight-bold" disabled [value]="montantTTC">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td *ngIf="showBtn === true && type !== 's'"></td>
+                  </tr>
+
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-light float-left" type="reset" *ngIf="type === 'i'"
+                        (click)="clearFactureForm()">
+                  <i class="fa fa-refresh"></i> Effacer
+                </button>
+                <button *ngIf="type === 'i'" [ladda]="isLoading" type="button" class="btn btn-primary float-right"
+                        [disabled]='factureForm.status==="INVALID"' (click)="saveFacture()">
+                  Enregistrer
+                </button>
+                <button *ngIf="type === 'u'" [ladda]="isLoading" type="button" class="btn btn-warning float-right"
+                        [disabled]='factureForm.status==="INVALID"' (click)="updateFacture()">
+                  Modifier
+                </button>
+              </div>
+            </div>
+          </form>
+        </tab>
+      </tabset>
+    </div><!--/.col-->
+  </div><!--/.row-->
+</div>

@@ -1,0 +1,53 @@
+<div class="modal-header modal-primary">
+  <h4 class="modal-title" *ngIf="type === 'i'">Ajouter Type Facture</h4>
+  <h4 class="modal-title" *ngIf="type === 'u'">Modifier Type Facture</h4>
+  <h4 class="modal-title" *ngIf="type === 's'">Afficher Type Facture</h4>
+  <button type="button" class="close" (click)="onCancel()" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="card-title" *ngIf="error">
+    <alert class="text-center" [type]="alert.type" [dismissible]="alert.dismissible" (onClose)="dismiss()">
+      <strong>{{error}}</strong>
+    </alert>
+  </div>
+  <form (keyup.enter)="typeFactureForm.status==='VALID' ? enterPress() : null" [formGroup]="typeFactureForm" novalidate>
+    <div class="form-group row">
+      <label for="nomTypeFacture" class="control-label col-md-3">Nom</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!typeFactureForm?.controls['nomTypeFacture']?.errors?.minlength || !!typeFactureForm?.controls['nomTypeFacture']?.errors?.required) && (typeFactureForm.controls['nomTypeFacture'].errors && (typeFactureForm.controls['nomTypeFacture'].dirty || typeFactureForm.controls['nomTypeFacture'].touched)),
+               'is-valid': (!typeFactureForm?.controls['nomTypeFacture']?.errors?.minlength || !typeFactureForm?.controls['nomTypeFacture']?.errors?.required) && (!typeFactureForm.controls['nomTypeFacture'].errors && (typeFactureForm.controls['nomTypeFacture'].dirty || typeFactureForm.controls['nomTypeFacture'].touched))}"
+               id="nomTypeFacture" type="text" class="form-control"
+               formControlName="nomTypeFacture">
+        <div
+          *ngIf="typeFactureForm.controls['nomTypeFacture'].errors && (typeFactureForm.controls['nomTypeFacture'].dirty || typeFactureForm.controls['nomTypeFacture'].touched)"
+          class="invalid-feedback">
+          <span [hidden]="!typeFactureForm.controls['nomTypeFacture'].errors?.required">Le <strong>nom</strong> est obligatoire.</span>
+          <span [hidden]="!typeFactureForm.controls['nomTypeFacture'].errors?.minlength">Le <strong>nom</strong> doit être de 4 caractères au minimum.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="description" class="control-label col-md-3">Description</label>
+      <div class="col-md-9">
+        <textarea id="description" cols="30" rows="2" class="form-control"
+               formControlName="description"></textarea>
+      </div>
+    </div>
+    <input id="id" type="hidden" formControlName="id">
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Fermer</button>
+  <button *ngIf="type === 'i'" [ladda]="isLoading" type="button" class="btn btn-primary"
+          [disabled]='typeFactureForm.status==="INVALID"'
+          (click)="saveTypeFacture()">
+    Enregistrer
+  </button>
+  <button *ngIf="type === 'u'" [ladda]="isLoading" type="button" class="btn btn-warning"
+          [disabled]='typeFactureForm.status==="INVALID"'
+          (click)="updateTypeFacture()">
+    Modifier
+  </button>
+</div>

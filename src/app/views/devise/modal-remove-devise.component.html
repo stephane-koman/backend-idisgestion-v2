@@ -1,0 +1,6 @@
+<div class="modal-body text-center">
+  <p>Voulez-vous <strong><span *ngIf="type === 'd'">désactiver</span><span *ngIf="type === 'e'">activer</span><span *ngIf="type === 'r'">supprimer</span></strong> le devise <strong>{{devise.nomDevise}}</strong>?</p>
+  <button type="button" class="btn btn-light" (click)="close()" >Non</button>
+  <button type="button" class="btn btn-danger" [ladda]="isLoading" *ngIf="(type === 'd') || (type === 'r')" (click)="confirm()" >Oui</button>
+  <button type="button" class="btn btn-success" *ngIf="type === 'e'" (click)="confirm()" >Oui</button>
+</div>

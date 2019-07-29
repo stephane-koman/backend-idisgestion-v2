@@ -1,0 +1,133 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <button class="btn btn-primary" placement="top" tooltip="Site" (click)="openModal(null, 'i')"><i
+            class="fa fa-plus"></i> Ajouter
+          </button>
+          <button class="btn btn-light float-right" (click)="reload()"><i class="fa fa-refresh"></i> Actualiser
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="input-group mb-4">
+                <div class="input-group-prepend">
+                  <span class="input-group-text text-color-blue">Nom</span>
+                </div>
+                <input (keyup)="searchNomSite()" class="form-control" type="text"
+                       [(ngModel)]="nomSite">
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="input-group mb-4">
+                <div class="input-group-prepend">
+                  <span class="input-group-text text-color-blue">Code</span>
+                </div>
+                <input (keyup)="searchNomSite()" class="form-control" type="text"
+                       [(ngModel)]="codeSite">
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="input-group mb-4">
+                <div class="input-group-prepend">
+                  <span class="input-group-text text-color-blue">Pays</span>
+                </div>
+                <ng-select class="form-control" *ngIf="allPays?.length > 0"
+                           [items]="allPays"
+                           bindLabel="nomPays"
+                           (change)="searchPays($event)"
+                           [(ngModel)]="pays"
+                           placeholder="">
+                </ng-select>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="input-group mb-4">
+                <div class="input-group-prepend">
+                  <span class="input-group-text text-color-blue">Statut</span>
+                </div>
+                <ng-select [clearable]="false" class="form-control" [(ngModel)]="enable" (change)="searchStatut()">
+                  <ng-option [value]="2">Tout</ng-option>
+                  <ng-option [value]="1">Actif</ng-option>
+                  <ng-option [value]="0">Inactif</ng-option>
+                </ng-select>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="allSites?.sites">
+            <table class="table table-condensed table-bordered data-table" [mfData]="allSites?.sites"
+                   #mf="mfDataTable" [mfRowsOnPage]="size">
+              <thead>
+              <tr>
+                <th style="width: 20%" class="text-center">
+                  <mfDefaultSorter by="nomSite" [mfShowSortableArrows]="true">Nom</mfDefaultSorter>
+                </th>
+                <th style="width: 15%" class="text-center">
+                  <mfDefaultSorter by="codeSite" [mfShowSortableArrows]="true">Code</mfDefaultSorter>
+                </th>
+                <th style="width: 15%" class="text-center">
+                  <mfDefaultSorter by="contact" [mfShowSortableArrows]="true">Contact</mfDefaultSorter>
+                </th>
+                <th style="width: 20%" class="text-center">
+                  <mfDefaultSorter by="pays"  [mfShowSortableArrows]="false">Pays</mfDefaultSorter>
+                </th>
+                <th style="width: 30%" class="text-center">
+                  <mfDefaultSorter>Actions</mfDefaultSorter>
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let site of mf.data; let i = index">
+                <td>{{site.nomSite}}</td>
+                <td>{{site.codeSite}}</td>
+                <td>{{site.contact}}</td>
+                <td>{{site.pays.nomPays}}</td>
+                <td class="text-center">
+                  <button class="btn btn-warning" placement="top" tooltip="Modifier" (click)="openModal(site, 'u')"><i
+                    class="fa fa-edit"></i></button>
+                  <button class="btn btn-light" placement="top" tooltip="Afficher" (click)="openModal(site, 's')"><i
+                    class="fa fa-eye"></i></button>
+                  <button class="btn btn-danger" placement="top" tooltip="Désactiver" *ngIf="site.enable === 1"
+                          (click)="openRemoveModal(site, 'd', i)"><i
+                    class="fa fa-lock"></i></button>
+                  <button class="btn btn-success" placement="top" tooltip="Activer" *ngIf="site.enable === 0"
+                          (click)="openRemoveModal(site, 'e', i)"><i
+                    class="fa fa-unlock-alt"></i></button>
+                  <button class="btn btn-danger" placement="top" tooltip="Supprimer"
+                          (click)="openRemoveModal(site, 'r', i)">
+                    <i class="fa fa-remove"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="allSites?.sites.length === 0">
+                <td colspan="5" class="text-center">Aucun resultat trouvé</td>
+              </tr>
+              </tbody>
+            </table>
+            <app-pagination
+              [pages]="pages"
+              [nombreElements]="allSites?.nombreSites"
+              [totalElements]="allSites?.totalSites"
+              [totalPages]="allSites?.totalPages"
+              [currentPage]="currentPage"
+              [size]="size"
+              [page]="page"
+              (search)="searchPage($event)"
+              (limit)="searchLimit($event)"
+              (first)="firstPage($event)"
+              (next)="nextPage($event)"
+              (previous)="previousPage($event)"
+              (last)="lastPage($event)"
+            ></app-pagination>
+          </div>
+
+        </div>
+      </div>
+    </div><!--/.col-->
+  </div><!--/.row-->
+</div>
