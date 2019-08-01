@@ -128,7 +128,7 @@ export class ModalSiteComponent implements OnInit, OnDestroy {
       codeSite: new FormControl(this.site.codeSite, [Validators.required, Validators.minLength(3)]),
       contact: new FormControl(this.site.contact, [Validators.required, Validators.minLength(8), Validators.pattern('[0-9 ]*')]),
       email: new FormControl(this.site.email, [Validators.required, Validators.email]),
-      siret: new FormControl(this.site.siret, [Validators.minLength(12), Validators.maxLength(12)]),
+      siret: new FormControl(this.site.siret, [Validators.minLength(12)]),
       adresse: new FormControl(this.site.adresse),
       description: new FormControl(this.site.description),
       tva: new FormControl(this.site.tva, [Validators.required]),

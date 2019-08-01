@@ -115,12 +115,7 @@ export class ReglementsComponent implements OnInit {
       this.montantRestant = null;
       this.reload();
     }
-  }
-
-  clearFormArray(formArray: FormArray) {
-    while (formArray.length !== 0) {
-      formArray.removeAt(0)
-    }
+    this.allFactures = [];
   }
 
   clearReglementForm() {
@@ -156,10 +151,6 @@ export class ReglementsComponent implements OnInit {
     this.searchReglements();
   }
 
-  searchReferenceColis() {
-    this.searchReglements();
-  }
-
   searchStatut() {
     this.searchReglements();
   }
@@ -174,13 +165,6 @@ export class ReglementsComponent implements OnInit {
       }, (err) => {
         console.log(err);
       });
-  }
-
-  getAllFactures() {
-    this.factureService.getAllFactures()
-      .subscribe((factures) => {
-        this.allFactures = factures;
-      })
   }
 
   getTypesReglements() {
@@ -404,7 +388,6 @@ export class ReglementsComponent implements OnInit {
       console.log(result);
       if (result.type === 'd') {
         this.allReglements.reglements[index].enable = 0;
-        this.getAllFactures();
       }
       if (result.type === 'e') {
         this.allReglements.reglements[index].enable = 1;
@@ -412,6 +395,7 @@ export class ReglementsComponent implements OnInit {
       if (result.type === 'r') {
         this.searchReglements();
       }
+      this.allFactures = [];
     });
 
   }
