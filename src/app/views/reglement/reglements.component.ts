@@ -20,6 +20,7 @@ import {ModalRemoveReglementComponent} from './modal-remove-reglement.component'
 import {Facture} from '../../models/facture/facture';
 import {FactureService} from '../../services/facture/facture.service';
 import {TypeReglement} from '../../models/type-reglement/type-reglement';
+import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-reglements',
@@ -66,6 +67,9 @@ export class ReglementsComponent implements OnInit {
   pages: Array<number>;
   showBtn: boolean = false;
 
+  print: boolean = false;
+  @ViewChild('externalPdfViewer', {static: false}) public externalPdfViewer;
+
   alert: any = {
     type: 'danger',
     dismissible: true
@@ -82,6 +86,7 @@ export class ReglementsComponent implements OnInit {
               private tokenService: TokenService,
               private fb: FormBuilder,
               private toastr: ToastrService,
+              private spinner: NgxSpinnerService,
               private modalService: BsModalService,
               private localeService: BsLocaleService) {
   }
@@ -254,6 +259,7 @@ export class ReglementsComponent implements OnInit {
   createReglement() {
     this.reglementForm = this.fb.group({
       id: [this.reglement.id],
+      numeroReglement: [this.reglement.numeroReglement],
       typeReglement: [this.reglement.typeReglement, Validators.required],
       montantRegle: [this.reglement.montantRegle, Validators.required],
       facture: [this.reglement.facture, Validators.required]
@@ -268,14 +274,17 @@ export class ReglementsComponent implements OnInit {
 
     this.reglementForm.setValue({
       id: reglement.id,
+      numeroReglement: reglement.numeroReglement,
       typeReglement: reglement.typeReglement,
       montantRegle: reglement.montantRegle,
       facture: reglement.facture
     });
 
     let id = this.reglementForm.get('id');
+    let numeroReglement = this.reglementForm.get('numeroReglement');
     let facture = this.reglementForm.get('facture');
     (this.type) ? id.disable() : id.enable();
+    (this.type) ? numeroReglement.disable() : numeroReglement.enable();
     (this.type) ? facture.disable() : facture.enable();
 
     this.selectTab(1);
@@ -288,16 +297,19 @@ export class ReglementsComponent implements OnInit {
 
     this.reglementForm.setValue({
       id: reglement.id,
+      numeroReglement: reglement.numeroReglement,
       typeReglement: reglement.typeReglement,
       montantRegle: reglement.montantRegle,
       facture: reglement.facture
     });
 
     let id = this.reglementForm.get('id');
+    let numeroReglement = this.reglementForm.get('numeroReglement');
     let montantRegle = this.reglementForm.get('montantRegle');
     let typeReglement = this.reglementForm.get('typeReglement');
     let facture = this.reglementForm.get('facture');
     (this.type) ? id.disable() : id.enable();
+    (this.type) ? numeroReglement.disable() : numeroReglement.enable();
     (this.type) ? montantRegle.disable() : montantRegle.enable();
     (this.type) ? typeReglement.disable() : typeReglement.enable();
     (this.type) ? facture.disable() : facture.enable();
@@ -357,6 +369,32 @@ export class ReglementsComponent implements OnInit {
   }
 
   // ---------------------------- END FORM COLIS --------------------------------------------
+
+  hidePrint(){
+    this.print = false;
+  }
+
+  downloadReglement(reglement: Reglement) {
+
+    this.print = true;
+    this.spinner.show();
+
+    this.reglementService.getReglementPDF(reglement.numeroReglement)
+      .subscribe((data) => {
+
+          let file = new Blob([data], {type: 'application/pdf'});
+          //let fileURL = URL.createObjectURL(file);
+
+          this.externalPdfViewer.pdfSrc = URL.createObjectURL(file);
+          this.externalPdfViewer.refresh();
+          this.spinner.hide();
+        },
+        (err) => {
+          console.log(err);
+          this.spinner.hide();
+        })
+
+  }
   // ------------------------------ START TOAST ---------------------------------------------
   showSave(msg: string) {
     this.toastr.success(msg, 'Enregistrement', {

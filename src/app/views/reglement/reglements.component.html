@@ -1,8 +1,27 @@
 <div class="animated fadeIn">
   <div class="row">
     <div class="col-md-12 mb-4">
+      <div class="col-md-12">
+        <ngx-spinner
+          bdColor="rgba(51,51,51,0.8)"
+          size="medium"
+          color="#fff"
+          type="ball-scale-multiple">
+        </ngx-spinner>
+        <div class="card" *ngIf="print">
+
+          <div class="card-header">
+            <button class="btn btn-light float-right" (click)="hidePrint()"><i class="fa fa-close"></i> Fermer
+            </button>
+          </div>
+          <div class="card-body" style="width: 100%; height: 500px">
+
+            <ng2-pdfjs-viewer #externalPdfViewer [showSpinner]="true"></ng2-pdfjs-viewer>
+          </div>
+        </div>
+      </div>
       <!-- Nav tabs -->
-      <tabset #staticTabs>
+      <tabset #staticTabs *ngIf="!print">
         <tab (selectTab)="onSelect($event)" id="liste-reglement">
           <ng-template tabHeading>
             <span class="font-weight-bold">
@@ -62,14 +81,17 @@
                        #mf="mfDataTable" [mfRowsOnPage]="size">
                   <thead>
                   <tr>
-                    <th style="width: 20%" class="text-center">
+                    <th style="width: 15%" class="text-center">
+                      <mfDefaultSorter by="numeroReglement" [mfShowSortableArrows]="false">Numéro</mfDefaultSorter>
+                    </th>
+                    <th style="width: 15%" class="text-center">
                       <mfDefaultSorter by="numeroReglement" [mfShowSortableArrows]="false">Facture</mfDefaultSorter>
                     </th>
-                    <th style="width: 20%" class="text-center">
+                    <th style="width: 15%" class="text-center">
                       <mfDefaultSorter by="typeReglement" [mfShowSortableArrows]="false">Type
                       </mfDefaultSorter>
                     </th>
-                    <th style="width: 25%" class="text-center">
+                    <th style="width: 20%" class="text-center">
                       <mfDefaultSorter by="client" [mfShowSortableArrows]="false">Client
                       </mfDefaultSorter>
                     </th>
@@ -83,6 +105,7 @@
                   </thead>
                   <tbody>
                   <tr *ngFor="let reglement of mf.data; let i = index">
+                    <td class="font-weight-bold">{{reglement?.numeroReglement}}</td>
                     <td class="font-weight-bold">{{reglement?.facture?.numeroFacture}}</td>
                     <td>{{reglement?.typeReglement?.nomTypeReglement | uppercase}}</td>
                     <td>{{reglement?.facture?.colis?.client?.raisonSociale | uppercase}}</td>
@@ -104,6 +127,9 @@
                           <li role="menuitem"><a class="dropdown-item text-default font-weight-bold"
                                                  (click)="showForm(reglement)"><i
                             class="fa fa-eye text-default font-weight-bold"></i> Afficher</a></li>
+                          <li role="menuitem"><a class="dropdown-item text-danger font-weight-bold"
+                                                 (click)="downloadReglement(reglement)"><i
+                            class="fa fa-file-pdf-o text-danger font-weight-bold"></i> PDF</a></li>
                           <li role="menuitem"><a class="dropdown-item text-danger font-weight-bold"
                                                  *ngIf="reglement.enable === 1"
                                                  (click)="openRemoveModal(reglement, 'd', i)"><i
@@ -213,6 +239,12 @@
             <span
               [hidden]="!reglementForm.controls['facture'].errors?.required">La <strong>facture</strong> est obligatoire.</span>
                       </div>
+                    </div>
+                  </div>
+                  <div class="form-group row col-md-6" *ngIf="type === 'u' || type === 's'">
+                    <label for="numeroReglement" class="control-label col-md-4 text-right">Numéro</label>
+                    <div class="col-md-8">
+                      <input id="numeroReglement" type="text" class="form-control" formControlName="numeroReglement">
                     </div>
                   </div>
                   <div class="form-group row col-md-6">

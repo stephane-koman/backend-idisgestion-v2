@@ -48,6 +48,7 @@ export class ModalClientComponent implements OnInit, OnDestroy {
         id: client.id || '',
         codeClient: client.codeClient || '',
         raisonSociale: client.raisonSociale || '',
+        domaineActivite: client.domaineActivite || '',
         contact: client.contact || '',
         email: client.email || '',
         adresse: client.adresse || ''
@@ -56,6 +57,7 @@ export class ModalClientComponent implements OnInit, OnDestroy {
       let id = this.clientForm.get('id');
       let codeClient = this.clientForm.get('codeClient');
       let raisonSociale = this.clientForm.get('raisonSociale');
+      let domaineActivite = this.clientForm.get('domaineActivite');
       let contact = this.clientForm.get('contact');
       let adresse = this.clientForm.get('adresse');
       let email = this.clientForm.get('email');
@@ -63,6 +65,7 @@ export class ModalClientComponent implements OnInit, OnDestroy {
       (this.type) ? id.disable() : id.enable();
       (this.type === 's' || this.type === 'u') ? codeClient.disable() : codeClient.enable();
       (this.type === 's') ? raisonSociale.disable() : raisonSociale.enable();
+      (this.type === 's') ? domaineActivite.disable() : domaineActivite.enable();
       (this.type === 's') ? contact.disable() : contact.enable();
       (this.type === 's') ? adresse.disable() : adresse.enable();
       (this.type === 's') ? email.disable() : email.enable();
@@ -76,6 +79,7 @@ export class ModalClientComponent implements OnInit, OnDestroy {
       id: new FormControl(this.client.id),
       codeClient: new FormControl(this.client.codeClient),
       raisonSociale: new FormControl(this.client.raisonSociale, [Validators.required, Validators.minLength(4)]),
+      domaineActivite: new FormControl(this.client.domaineActivite, [Validators.required]),
       contact: new FormControl(this.client.contact, [Validators.required, Validators.minLength(8), Validators.pattern('[0-9 ]*')]),
       email: new FormControl(this.client.email, [Validators.required, Validators.email]),
       adresse: new FormControl(this.client.adresse, [Validators.required])
@@ -114,6 +118,7 @@ export class ModalClientComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.client.type = "CLIENT";
     this.client.raisonSociale = this.clientForm.value.raisonSociale;
+    this.client.domaineActivite = this.clientForm.value.domaineActivite;
     this.client.contact = this.clientForm.value.contact;
     this.client.adresse = this.clientForm.value.adresse;
     this.client.email = this.clientForm.value.email;
@@ -142,6 +147,7 @@ export class ModalClientComponent implements OnInit, OnDestroy {
     this.client.id = this.clientForm.getRawValue().id;
     this.client.codeClient = this.clientForm.getRawValue().codeClient;
     this.client.raisonSociale = this.clientForm.getRawValue().raisonSociale;
+    this.client.domaineActivite = this.clientForm.getRawValue().domaineActivite;
     this.client.contact = this.clientForm.getRawValue().contact;
     this.client.adresse = this.clientForm.getRawValue().adresse;
     this.client.email = this.clientForm.getRawValue().email;

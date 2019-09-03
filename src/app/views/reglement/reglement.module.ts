@@ -24,6 +24,8 @@ import { defineLocale } from 'ngx-bootstrap/chronos';
 import { frLocale } from 'ngx-bootstrap/locale';
 import {FactureService} from '../../services/facture/facture.service';
 import {TvaService} from '../../services/tva/tva.service';
+import {PdfJsViewerModule} from 'ng2-pdfjs-viewer';
+import {NgxSpinnerModule} from 'ngx-spinner';
 defineLocale('fr', frLocale);
 
 @NgModule({
@@ -53,6 +55,8 @@ defineLocale('fr', frLocale);
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot(),
     NgxQRCodeModule,
+    PdfJsViewerModule,
+    NgxSpinnerModule,
     PaginationModule
   ],
   declarations: [

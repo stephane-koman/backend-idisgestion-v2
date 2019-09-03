@@ -30,8 +30,22 @@
         <div
           *ngIf="clientForm.controls['raisonSociale'].errors && (clientForm.controls['raisonSociale'].dirty || clientForm.controls['raisonSociale'].touched)"
           class="invalid-feedback">
-          <span [hidden]="!clientForm.controls['raisonSociale'].errors?.required">Le <strong>nom</strong> est obligatoire.</span>
-          <span [hidden]="!clientForm.controls['raisonSociale'].errors?.minlength">Le <strong>nom</strong> doit être de 4 caractères au minimum.</span>
+          <span [hidden]="!clientForm.controls['raisonSociale'].errors?.required">Le champ <strong>nom</strong> est obligatoire.</span>
+          <span [hidden]="!clientForm.controls['raisonSociale'].errors?.minlength">Le champ <strong>nom</strong> doit être de 4 caractères au minimum.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="domaineActivite" class="control-label col-md-3">Domaine d'activité</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!clientForm?.controls['domaineActivite']?.errors?.minlength || !!clientForm?.controls['domaineActivite']?.errors?.required) && (clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched)),
+               'is-valid': (!clientForm?.controls['domaineActivite']?.errors?.minlength || !clientForm?.controls['domaineActivite']?.errors?.required) && (!clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched))}"
+               id="domaineActivite" type="text" class="form-control"
+               formControlName="domaineActivite">
+        <div
+          *ngIf="clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched)"
+          class="invalid-feedback">
+          <span [hidden]="!clientForm.controls['domaineActivite'].errors?.required">Le champ <strong>domaine d'activité</strong> est obligatoire.</span>
         </div>
       </div>
     </div>

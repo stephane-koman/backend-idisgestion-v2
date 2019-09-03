@@ -75,6 +75,19 @@ export class ReglementService {
       );
   }
 
+  public getReglementPDF(numeroReglement: string) {
+    let httpParams = new HttpParams()
+      .append('numeroReglement', numeroReglement);
+    return this.http.get(`${BASE_URL}/user/reglement-pdf`, {params: httpParams, responseType: 'arraybuffer'})
+      .pipe(
+        tap(
+          data => console.log(data),
+          error => console.log(error)
+        ),
+        catchError(this.handleErrorService.handleError)
+      );
+  }
+
   public disableReglement(mouvement: Mouvement) {
     return this.http.post<Reglement>(`${BASE_URL}/user/disable-reglement`, mouvement)
       .pipe(
