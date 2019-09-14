@@ -38,14 +38,37 @@
     <div class="form-group row">
       <label for="domaineActivite" class="control-label col-md-3">Domaine d'activité</label>
       <div class="col-md-9">
-        <input [ngClass]="{'is-invalid': (!!clientForm?.controls['domaineActivite']?.errors?.minlength || !!clientForm?.controls['domaineActivite']?.errors?.required) && (clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched)),
-               'is-valid': (!clientForm?.controls['domaineActivite']?.errors?.minlength || !clientForm?.controls['domaineActivite']?.errors?.required) && (!clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched))}"
-               id="domaineActivite" type="text" class="form-control"
-               formControlName="domaineActivite">
+        <ng-select [ngClass]="{'is-invalid': (!!clientForm?.controls['domaineActivite']?.errors?.required) && (clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched)),
+                   'is-valid': (!clientForm?.controls['domaineActivite']?.errors?.required) && (!clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched))}"
+                   id="domaineActivite" class="form-control"
+                   [items]="allDomainesActivite"
+                   bindLabel="code"
+                   (change)="searchCodeDomaineActivite($event)"
+                   (search)="getDomaineActiviteByCode($event)"
+                   formControlName="domaineActivite"
+                   placeholder="Aucun domaine d'activité sélectionné">
+        </ng-select>
         <div
           *ngIf="clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched)"
+          class="invalid-perso">
+            <span
+              [hidden]="!clientForm.controls['domaineActivite'].errors?.required">Le <strong>domaine d'activité</strong> est obligatoire.</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="responsable" class="control-label col-md-3">Responsable</label>
+      <div class="col-md-9">
+        <input [ngClass]="{'is-invalid': (!!clientForm?.controls['responsable']?.errors?.minlength || !!clientForm?.controls['responsable']?.errors?.required || !!clientForm?.controls['responsable']?.errors?.pattern) && (clientForm.controls['responsable'].errors && (clientForm.controls['responsable'].dirty || clientForm.controls['responsable'].touched)),
+               'is-valid': (!clientForm?.controls['responsable']?.errors?.minlength || !clientForm?.controls['responsable']?.errors?.required || !clientForm?.controls['responsable']?.errors?.pattern) && (!clientForm.controls['responsable'].errors && (clientForm.controls['responsable'].dirty || clientForm.controls['responsable'].touched))}"
+               id="responsable" type="tel" class="form-control"
+               formControlName="responsable">
+        <div
+          *ngIf="clientForm.controls['responsable'].errors && (clientForm.controls['responsable'].dirty || clientForm.controls['responsable'].touched)"
           class="invalid-feedback">
-          <span [hidden]="!clientForm.controls['domaineActivite'].errors?.required">Le champ <strong>domaine d'activité</strong> est obligatoire.</span>
+          <span [hidden]="!clientForm.controls['responsable'].errors?.required">Le <strong>responsable</strong> est obligatoire.</span>
+          <span
+            [hidden]="!clientForm.controls['responsable'].errors?.pattern">Le <strong>responsable</strong> est invalide.</span>
         </div>
       </div>
     </div>

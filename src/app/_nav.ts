@@ -120,6 +120,11 @@ export const navItems: NavData[] = [
         icon: 'icon-wrench'
       },
       {
+        name: 'Domaines d\'activités',
+        url: '/parametres/domaine-activite',
+        icon: 'icon-grid'
+      },
+      {
         name: 'Sites',
         url: '/parametres/site',
         icon: 'icon-grid'

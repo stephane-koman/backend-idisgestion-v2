@@ -104,7 +104,7 @@
                     <td class="font-weight-bold">{{colis.reference}}</td>
                     <td>{{colis.client.raisonSociale}}</td>
                     <td>{{colis.nomDestinataire}}</td>
-                    <td class="text-right font-weight-bold">{{colis.valeurColis}} {{user?.personne?.site?.devise?.nomDevise}}</td>
+                    <td class="text-right font-weight-bold">{{colis.valeurColis | number}} {{user?.personne?.site?.devise?.nomDevise}}</td>
                     <td class="text-center">
                       <div class="btn-group" dropdown [dropup]="false">
                         <button id="button-basic" dropdownToggle type="button" class="btn btn-light dropdown-toggle"
@@ -258,6 +258,12 @@
                       <input id="reference" type="text" class="form-control" formControlName="reference">
                     </div>
                   </div>
+                  <div class="form-group row col-md-6" *ngIf="type === 'u' || type === 's'">
+                    <label for="codeLivraison" class="control-label col-md-4 text-right">Code livraison</label>
+                    <div class="col-md-8">
+                      <input id="codeLivraison" type="text" class="form-control" formControlName="codeLivraison">
+                    </div>
+                  </div>
                   <div class="form-group row col-md-6">
                     <label for="valeur" class="control-label col-md-4 text-right">Valeur</label>
                     <div class="col-md-8">
@@ -302,6 +308,25 @@
                               qrc-version = "8"
                               qrc-errorCorrectionLevel="L">
                       </ngx-qrcode>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <span>IMAGES COLIS</span>
+                <div class="pull-right" *ngIf="type !== 's'">
+                  <input  class="form-control-file" accept="image/*" type="file" id="file" multiple (change)="onSelectFiles($event)">
+                  <label for="file"><i class="fa fa-upload"></i> Choisir images</label>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="form-group row col-md-12">
+                    <div class="col-md-4 card-img" *ngFor="let img of images; let i = index;">
+                      <i class="fa fa-close" (click)="deleteImage(i)" *ngIf="type !== 's'"></i>
+                      <img class="col-md-12" src="{{ img }}" height="200px" width="100%" alt="">
                     </div>
                   </div>
                 </div>

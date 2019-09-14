@@ -324,58 +324,6 @@ export class ColisReceiveComponent implements OnInit {
     this.colisForm.setControl('detailsColis', dcFormArray);
   }
 
-  saveColis() {
-    console.log(this.colisForm);
-    this.isLoading = true;
-    this.colis.valeurColis = this.colisForm.value.valeurColis;
-    this.colis.description = this.colisForm.value.description;
-    this.colis.nomDestinataire = this.colisForm.value.nomDestinataire;
-    this.colis.contactDestinataire = this.colisForm.value.contactDestinataire;
-    this.colis.adresseDestinataire = this.colisForm.value.adresseDestinataire;
-    this.colis.siteDestinataire = this.colisForm.value.siteDestinataire;
-    this.colis.client = this.colisForm.value.client;
-    this.colis.detailsColis = this.colisForm.value.detailsColis;
-
-    this.colisService.addColis(this.colis)
-      .subscribe((colis) => {
-        console.log(colis);
-        this.clearSearchColis();
-        this.clearColisForm();
-        this.isLoading = false;
-        this.selectTab(0);
-        this.showSave('Colis enregistré avec succès!')
-      }, (err) => {
-        console.log(err);
-        this.isLoading = false;
-      })
-  }
-
-  updateColis() {
-    console.log(this.colisForm);
-    this.isLoading = true;
-    this.colis.valeurColis = this.colisForm.getRawValue().valeurColis;
-    this.colis.description = this.colisForm.getRawValue().description;
-    this.colis.nomDestinataire = this.colisForm.getRawValue().nomDestinataire;
-    this.colis.contactDestinataire = this.colisForm.getRawValue().contactDestinataire;
-    this.colis.adresseDestinataire = this.colisForm.getRawValue().adresseDestinataire;
-    this.colis.siteDestinataire = this.colisForm.getRawValue().siteDestinataire;
-    this.colis.client = this.colisForm.getRawValue().client;
-    this.colis.detailsColis = this.colisForm.getRawValue().detailsColis;
-
-    this.colisService.updateColis(this.colis)
-      .subscribe((colis) => {
-        console.log(colis);
-        this.clearSearchColis();
-        this.clearColisForm();
-        this.isLoading = false;
-        this.selectTab(0);
-        this.showUpdate('Colis modifié avec succès!')
-      }, (err) => {
-        console.log(err);
-        this.isLoading = false;
-      })
-  }
-
   // ---------------------------- END FORM COLIS --------------------------------------------
   // ------------------------------ START TOAST ---------------------------------------------
   showSave(msg: string) {

@@ -122,10 +122,10 @@
                     <td>{{facture?.typeFacture?.nomTypeFacture | uppercase}}</td>
                     <td>{{facture?.colis?.client?.raisonSociale | uppercase}}</td>
                     <td>{{facture?.colis?.reference}}</td>
-                    <td class="text-right font-weight-bold">{{facture?.debit}}
+                    <td class="text-right font-weight-bold">{{facture?.debit | number}}
                       {{user?.personne?.site?.devise?.nomDevise}}
                     </td>
-                    <td class="text-right font-weight-bold">{{facture?.credit}}
+                    <td class="text-right font-weight-bold">{{facture?.credit | number}}
                       {{user?.personne?.site?.devise?.nomDevise}}
                     </td>
                     <td class="text-center">
@@ -370,7 +370,7 @@
                     </td>
                     <td>
                       <div class="input-group mb-4">
-                        <input formControlName="prixTotal" type="number" class="form-control text-right">
+                        <input [value]="lf.get('prixTotal').value | number" formControlName="prixTotal" type="number" class="form-control text-right">
                         <div class="input-group-prepend">
                           <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
                         </div>
@@ -387,7 +387,7 @@
                     <td colspan="4" class="text-right font-weight-bold">Montant HT</td>
                     <td>
                       <div class="input-group mb-4">
-                        <input type="number" class="form-control text-right font-weight-bold" disabled [value]="montantHT">
+                        <input type="number" class="form-control text-right font-weight-bold" disabled [value]="montantHT | number">
                         <div class="input-group-prepend">
                           <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
                         </div>
@@ -419,7 +419,7 @@
                     <td colspan="4" class="text-right font-weight-bold">Montant TTC</td>
                     <td>
                       <div class="input-group mb-4">
-                        <input type="number" class="form-control text-right font-weight-bold" disabled [value]="montantTTC">
+                        <input type="number" class="form-control text-right font-weight-bold" disabled [value]="montantTTC | number">
                         <div class="input-group-prepend">
                           <span class="input-group-text">{{user?.personne?.site?.devise?.nomDevise}}</span>
                         </div>

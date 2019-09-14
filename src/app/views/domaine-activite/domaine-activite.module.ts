@@ -1,34 +1,33 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {ClientRoutingModule} from './client-routing.module';
-import {ClientsComponent} from './clients.component';
-import {NgSelectModule} from '@ng-select/ng-select';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {LaddaModule} from 'angular2-ladda';
+import {DomaineActiviteRoutingModule} from './domaine-activite-routing.module';
+import {DomaineActiviteComponent} from './domaine-activite.component';
 import {
   AlertModule, BsDropdownModule, CarouselModule, CollapseModule, ModalModule, PopoverModule, ProgressbarModule, TabsModule,
   TooltipModule
 } from 'ngx-bootstrap';
-import {DataTableModule} from 'ng2-data-table';
+import {LaddaModule} from 'angular2-ladda';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ToastrModule} from 'ngx-toastr';
 import {PaginationModule} from '../../components/pagination/pagination.module';
-import {ClientService} from '../../services/client/client.service';
-import {ModalClientComponent} from './modal-client.component';
-import {ModalRemoveClientComponent} from './modal-remove-client.component';
+import {DataTableModule} from 'ng2-data-table';
+import {ModalDomaineActiviteComponent} from './modal-domaine-activite.component';
+import {ModalRemoveDomaineActiviteComponent} from './modal-remove-domaine-activite.component';
 import {DomaineActiviteService} from '../../services/domaine-activite/domaine-activite.service';
+import {NgSelectModule} from '@ng-select/ng-select';
 
 @NgModule({
   imports: [
     CommonModule,
-    ClientRoutingModule,
+    DomaineActiviteRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     NgSelectModule ,
     DataTableModule,
     LaddaModule.forRoot({
-      style: 'expand-left',
+      style: "expand-left",
       spinnerSize: 40,
-      spinnerColor: 'white',
+      spinnerColor: "white",
       spinnerLines: 12
     }),
     BsDropdownModule.forRoot(),
@@ -44,17 +43,13 @@ import {DomaineActiviteService} from '../../services/domaine-activite/domaine-ac
     PaginationModule
   ],
   declarations: [
-    ClientsComponent,
-    ModalClientComponent,
-    ModalRemoveClientComponent
+    DomaineActiviteComponent,
+    ModalDomaineActiviteComponent,
+    ModalRemoveDomaineActiviteComponent,
   ],
-  entryComponents: [
-    ModalClientComponent,
-    ModalRemoveClientComponent
-  ],
+  entryComponents: [ModalDomaineActiviteComponent, ModalRemoveDomaineActiviteComponent],
   providers: [
-    ClientService,
     DomaineActiviteService
   ]
 })
-export class ClientModule { }
+export class DomaineActiviteModule { }

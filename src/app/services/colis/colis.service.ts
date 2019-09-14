@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpBackend, HttpHeaders, HttpParams} from '@angular/common/http';
 import {HandleErrorService} from '../error/handle-error.service';
 import {BASE_URL} from '../const/constants.service';
 import {Observable} from 'rxjs';
@@ -11,10 +11,15 @@ import {Utilisateur} from '../../models/utilisateur/utilisateur';
 @Injectable()
 export class ColisService {
 
+  private httpClient: HttpClient;
+
   constructor(
     private http: HttpClient,
-    private handleErrorService: HandleErrorService
-  ) { }
+    private handleErrorService: HandleErrorService,
+    handler: HttpBackend
+  ) {
+    this.httpClient = new HttpClient(handler);
+  }
 
   public getAllSendColis(): Observable<any> {
     return this.http.get<Array<Colis>>(`${BASE_URL}/user/send/all-colis`)
@@ -92,9 +97,9 @@ export class ColisService {
       );
   }
 
-  public addColis(colis: Colis) {
+  public addColis(formData: any) {
 
-    return this.http.post<Colis>(`${BASE_URL}/user/add-colis`, colis)
+    return this.http.post<Colis>(`${BASE_URL}/user/add-colis-files`, formData)
       .pipe(
         tap(data => console.log(data) ),
         catchError(this.handleErrorService.handleError)
@@ -102,9 +107,9 @@ export class ColisService {
 
   }
 
-  public updateColis(colis: Colis) {
+  public updateColis(formData: any) {
 
-    return this.http.post<Colis>(`${BASE_URL}/user/update-colis`, colis)
+    return this.http.post<Colis>(`${BASE_URL}/user/update-colis-files`, formData)
       .pipe(
         tap(data => console.log(data) ),
         catchError(this.handleErrorService.handleError)

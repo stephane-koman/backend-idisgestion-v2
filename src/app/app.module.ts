@@ -53,6 +53,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {ToastrModule} from 'ngx-toastr';
 import {NgSelectModule} from '@ng-select/ng-select';
 import {DataTableModule} from 'ng2-data-table';
+import {FileUploadModule} from 'ng2-file-upload';
 
 export function tokenGetter() {
   return localStorage.getItem('jwt_token');
@@ -99,7 +100,8 @@ export function tokenGetter() {
     ReactiveFormsModule,
     LaddaModule,
     LoginModule,
-    PaginationModule
+    PaginationModule,
+    FileUploadModule
   ],
   exports: [BrowserAnimationsModule],
   declarations: [

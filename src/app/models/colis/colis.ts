@@ -8,10 +8,12 @@ import {Utilisateur} from '../utilisateur/utilisateur';
 import {Client} from '../client/client';
 import {DetailsColis} from './details-colis';
 import {Devise} from '../devise/devise';
+import {Image} from '../image/image';
 
 export class Colis{
   id: number;
   reference: string;
+  codeLivraison: string;
   qrCode: string;
   valeurColis: number;
   description: string;
@@ -32,4 +34,5 @@ export class Colis{
   client: Client;
   devise: Devise;
   detailsColis: Array<DetailsColis>;
+  images: Array<Image>;
 }

@@ -135,3 +135,66 @@
 .font-weight-bold{
   font-weight: 600 !important;
 }
+
+.area {
+  width: 77%;
+  padding: 15px;
+  margin: 15px;
+  border: 1px solid #333;
+  background: rgba(0,0,0,0.7);
+}
+
+#dropZone {
+  border: 2px dashed #bbb;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  padding: 50px;
+  text-align: center;
+  font: 21pt bold arial;
+  color: #bbb;
+}
+
+.drop-file-over{
+  background: #333;
+}
+
+.form-control-file{
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.form-control-file + label {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  color: white;
+  background-color: #20a8d8;
+  border-color: #20a8d8;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.form-control-file + label * {
+  pointer-events: none;
+}
+
+.form-control-file + label:hover {
+  color: #fff;
+  background-color: #1b8eb7;
+  border-color: #1985ac;
+}
+
+.card-img{
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.card-img .fa-close:hover {
+  color: red !important;
+  cursor: pointer;
+}

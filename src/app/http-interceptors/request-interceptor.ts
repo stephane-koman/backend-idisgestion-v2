@@ -16,9 +16,16 @@ export class RequestInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
+    let clonedReq: any = req;
+
     if (req.method == 'POST' || req.method == 'PATCH' || req.method == 'PUT') {
 
-      const clonedReq = req.clone({setHeaders: {'Content-Type': 'application/json'}});
+      if(req.url.indexOf('-files') === -1){
+        clonedReq = req.clone({setHeaders: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }});
+      }
 
       return next.handle(clonedReq);
     }

@@ -20,8 +20,9 @@ import {ModalRemoveColisComponent} from './modal-remove-colis.component';
 import {SuiviColisComponent} from './suivi-colis.component';
 import {UtilisateurService} from '../../services/utilisateur/utilisateur.service';
 import {Utilisateur} from '../../models/utilisateur/utilisateur';
-import {Facture} from "../../models/facture/facture";
 import {NgxSpinnerService} from "ngx-spinner";
+import {DomSanitizer} from '@angular/platform-browser';
+import {Image} from '../../models/image/image';
 
 @Component({
   selector: 'app-colis-send',
@@ -64,6 +65,9 @@ export class ColisSendComponent implements OnInit {
   print: boolean = false;
   @ViewChild('externalPdfViewer', {static: false}) public externalPdfViewer;
 
+  myFiles: any[] = [];
+  images: any[] = [];
+
   constructor(private colisService: ColisService,
               private clientService: ClientService,
               private siteService: SiteService,
@@ -72,7 +76,8 @@ export class ColisSendComponent implements OnInit {
               private fb: FormBuilder,
               private toastr: ToastrService,
               private spinner: NgxSpinnerService,
-              private modalService: BsModalService
+              private modalService: BsModalService,
+              private sanitizer: DomSanitizer
               ) {
   }
 
@@ -106,6 +111,7 @@ export class ColisSendComponent implements OnInit {
     this.colisForm.reset({
       id: '',
       reference: '',
+      codeLivraison: '',
       qrCode: '',
       valeurColis: '',
       description: '',
@@ -117,6 +123,8 @@ export class ColisSendComponent implements OnInit {
       detailsColis: new FormArray([])
     });
     this.colis = new Colis();
+    this.images = [];
+    this.myFiles = [];
   }
 
   clearSearchColis() {
@@ -157,13 +165,6 @@ export class ColisSendComponent implements OnInit {
       }, (err) => {
         console.log(err);
       });
-  }
-
-  getAllClients() {
-    this.clientService.getAllClients()
-      .subscribe((clients) => {
-        this.allClients = clients;
-      })
   }
 
   getClientsByRaisonSociale(event: any){
@@ -234,6 +235,7 @@ export class ColisSendComponent implements OnInit {
     this.colisForm = this.fb.group({
       id: [this.colis.id],
       reference: [this.colis.reference],
+      codeLivraison: [this.colis.codeLivraison],
       qrCode: [this.colis.qrCode],
       valeurColis: [this.colis.valeurColis, Validators.required],
       description: [this.colis.description, Validators.required],
@@ -279,6 +281,7 @@ export class ColisSendComponent implements OnInit {
     this.colisForm.setValue({
       id: colis.id,
       reference: colis.reference,
+      codeLivraison: colis.codeLivraison,
       qrCode: colis.qrCode,
       valeurColis: colis.valeurColis,
       description: colis.description,
@@ -292,14 +295,19 @@ export class ColisSendComponent implements OnInit {
 
     let id = this.colisForm.get('id');
     let reference = this.colisForm.get('reference');
+    let codeLivraison = this.colisForm.get('codeLivraison');
     (this.type) ? id.disable() : id.enable();
     (this.type) ? reference.disable() : reference.enable();
+    (this.type) ? codeLivraison.disable() : codeLivraison.enable();
 
 
     if (colis.detailsColis.length > 0) {
       this.setDetailsColis(colis.detailsColis);
     }
-    console.log(this.colisForm);
+
+    if(colis.images.length > 0) {
+      this.setImagesColis(colis.images)
+    }
 
     this.selectTab(1);
   }
@@ -313,6 +321,7 @@ export class ColisSendComponent implements OnInit {
     this.colisForm.setValue({
       id: colis.id,
       reference: colis.reference,
+      codeLivraison: colis.codeLivraison,
       qrCode: colis.qrCode,
       valeurColis: colis.valeurColis,
       description: colis.description,
@@ -328,6 +337,10 @@ export class ColisSendComponent implements OnInit {
       this.setDetailsColis(colis.detailsColis);
     }
 
+    if(colis.images.length > 0) {
+      this.setImagesColis(colis.images)
+    }
+
     this.colisForm.disable();
 
     this.selectTab(1);
@@ -339,9 +352,40 @@ export class ColisSendComponent implements OnInit {
     this.colisForm.setControl('detailsColis', dcFormArray);
   }
 
+  dataURItoBlob(dataURI) {
+    const byteString = window.atob(dataURI);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([int8Array], { type: 'image/jpeg' });
+  }
+
+  setImagesColis(imagesColis: Image[]) {
+
+    this.images = [];
+    this.myFiles = [];
+
+    imagesColis.forEach(img => {
+
+      this.myFiles.push(this.dataURItoBlob(img.file));
+
+      let reader = new FileReader();
+
+      reader.readAsDataURL(this.dataURItoBlob(img.file));
+
+      reader.onload = () => {
+        this.images.push(reader.result);
+      }
+    });
+  }
+
   saveColis() {
-    console.log(this.colisForm);
+
     this.isLoading = true;
+
     this.colis.valeurColis = this.colisForm.value.valeurColis;
     this.colis.description = this.colisForm.value.description;
     this.colis.nomDestinataire = this.colisForm.value.nomDestinataire;
@@ -351,7 +395,20 @@ export class ColisSendComponent implements OnInit {
     this.colis.client = this.colisForm.value.client;
     this.colis.detailsColis = this.colisForm.value.detailsColis;
 
-    this.colisService.addColis(this.colis)
+    const formData = new FormData();
+
+    if(this.myFiles.length > 0){
+      for (let i = 0; i < this.myFiles.length; i++) {
+        formData.append("images", this.myFiles[i]);
+      }
+    }
+
+    formData.append('colis', JSON.stringify(this.colis));
+
+    this.images = [];
+    this.myFiles = [];
+
+    this.colisService.addColis(formData)
       .subscribe((colis) => {
         console.log(colis);
         this.clearSearchColis();
@@ -366,8 +423,9 @@ export class ColisSendComponent implements OnInit {
   }
 
   updateColis() {
-    console.log(this.colisForm);
+
     this.isLoading = true;
+
     this.colis.valeurColis = this.colisForm.getRawValue().valeurColis;
     this.colis.description = this.colisForm.getRawValue().description;
     this.colis.nomDestinataire = this.colisForm.getRawValue().nomDestinataire;
@@ -376,8 +434,24 @@ export class ColisSendComponent implements OnInit {
     this.colis.siteDestinataire = this.colisForm.getRawValue().siteDestinataire;
     this.colis.client = this.colisForm.getRawValue().client;
     this.colis.detailsColis = this.colisForm.getRawValue().detailsColis;
+    this.colis.images = [];
 
-    this.colisService.updateColis(this.colis)
+
+    const formData = new FormData();
+
+    if(this.myFiles.length > 0){
+      for (let i = 0; i < this.myFiles.length; i++) {
+        console.log(i, ' : ', this.myFiles[i]);
+        formData.append("images", this.myFiles[i]);
+      }
+    }
+
+    formData.append('colis', JSON.stringify(this.colis));
+
+    this.images = [];
+    this.myFiles = [];
+
+    this.colisService.updateColis(formData)
       .subscribe((colis) => {
         console.log(colis);
         this.clearSearchColis();
@@ -388,7 +462,7 @@ export class ColisSendComponent implements OnInit {
       }, (err) => {
         console.log(err);
         this.isLoading = false;
-      })
+      });
   }
 
   hidePrint(){
@@ -505,6 +579,33 @@ export class ColisSendComponent implements OnInit {
   }
 
   //----------------------------- END SUIVI COLIS ---------------------------------------
+
+  //------------------------------  START UPLOAD IMAGES   -----------------------------------
+  onSelectFiles(e) {
+    //console.log (typeof(e.target.files[0]));
+    const files = e.target.files;
+
+    for (let i = 0; i < files.length; i++) {
+
+      this.myFiles.push(files[i]);
+
+      let reader = new FileReader();
+
+      reader.readAsDataURL(files[i]);
+      reader.onload = () => {
+        this.images.push(reader.result);
+      }
+    }
+  }
+
+  deleteImage(index: number){
+    this.images.splice(index, 1);
+    this.myFiles.splice(index, 1);
+  }
+
+
+  //------------------------------  END UPLOAD IMAGES   -----------------------------------
+
 
   ngOnDestroy() {
     this.colisSubscription !== null ? this.colisSubscription.unsubscribe() : null;

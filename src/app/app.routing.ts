@@ -110,6 +110,12 @@ export const routes: Routes = [
         data: {roles: ['ADMIN', 'USER']}
       },
       {
+        path: 'parametres/domaine-activite',
+        loadChildren: () => import('./views/domaine-activite/domaine-activite.module').then(m => m.DomaineActiviteModule),
+        canActivate:[RoleGuard],
+        data: {roles: ['ADMIN', 'USER']}
+      },
+      {
         path: 'parametres/type-facture',
         loadChildren: () => import('./views/type-facture/type-facture.module').then(m => m.TypeFactureModule),
         canActivate:[RoleGuard],

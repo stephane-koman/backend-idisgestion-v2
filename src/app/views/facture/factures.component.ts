@@ -122,10 +122,6 @@ export class FacturesComponent implements OnInit {
         }
     }
 
-  testSearch(event: any){
-      console.log(event);
-  }
-
     clearFormArray(formArray: FormArray) {
         while (formArray.length !== 0) {
             formArray.removeAt(0)

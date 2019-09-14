@@ -22,6 +22,7 @@ import {SuiviColisComponent} from './suivi-colis.component';
 import {UtilisateurService} from '../../services/utilisateur/utilisateur.service';
 import {PdfJsViewerModule} from "ng2-pdfjs-viewer";
 import {NgxSpinnerModule} from "ngx-spinner";
+import {FileUploadModule} from 'ng2-file-upload';
 
 @NgModule({
   imports: [
@@ -50,7 +51,8 @@ import {NgxSpinnerModule} from "ngx-spinner";
     NgxQRCodeModule,
     PaginationModule,
     PdfJsViewerModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    FileUploadModule
   ],
   declarations: [
     ColisReceiveComponent,
