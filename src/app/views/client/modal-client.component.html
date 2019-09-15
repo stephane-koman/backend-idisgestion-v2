@@ -38,13 +38,21 @@
     <div class="form-group row">
       <label for="domaineActivite" class="control-label col-md-3">Domaine d'activité</label>
       <div class="col-md-9">
-        <ng-select [ngClass]="{'is-invalid': (!!clientForm?.controls['domaineActivite']?.errors?.required) && (clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched)),
+        <!--<ng-select [ngClass]="{'is-invalid': (!!clientForm?.controls['domaineActivite']?.errors?.required) && (clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched)),
                    'is-valid': (!clientForm?.controls['domaineActivite']?.errors?.required) && (!clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched))}"
                    id="domaineActivite" class="form-control"
                    [items]="allDomainesActivite"
                    bindLabel="code"
                    (change)="searchCodeDomaineActivite($event)"
                    (search)="getDomaineActiviteByCode($event)"
+                   formControlName="domaineActivite"
+                   placeholder="Aucun domaine d'activité sélectionné">
+        </ng-select>-->
+        <ng-select [ngClass]="{'is-invalid': (!!clientForm?.controls['domaineActivite']?.errors?.required) && (clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched)),
+                   'is-valid': (!clientForm?.controls['domaineActivite']?.errors?.required) && (!clientForm.controls['domaineActivite'].errors && (clientForm.controls['domaineActivite'].dirty || clientForm.controls['domaineActivite'].touched))}"
+                   id="domaineActivite" class="form-control"
+                   [items]="allDomainesActivite"
+                   bindLabel="code"
                    formControlName="domaineActivite"
                    placeholder="Aucun domaine d'activité sélectionné">
         </ng-select>

@@ -45,6 +45,7 @@ export class ModalClientComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.onClose = new Subject();
     this.createForm();
+    this.getAllDomainesActivites();
   }
 
   public showClientModal(type: string, client: Client): void {
@@ -101,6 +102,15 @@ export class ModalClientComponent implements OnInit, OnDestroy {
   }
 
   // ---------------------------  START DOMAINE ACTIVITE  ----------------------------------------
+  getAllDomainesActivites(){
+    this.domaineActiviteService.getAllDomaineActivite()
+      .subscribe((domainesActivites) => {
+        this.allDomainesActivite = domainesActivites;
+      }, (err) => {
+        console.log(err);
+      })
+  }
+
   searchCodeDomaineActivite(domaineActivite: DomaineActivite) {
     console.log(domaineActivite);
     if (domaineActivite !== undefined) {
@@ -116,6 +126,8 @@ export class ModalClientComponent implements OnInit, OnDestroy {
       this.domaineActiviteService.getDomainesActiviteByCode(event.term)
         .subscribe((domainesActivite) => {
           this.allDomainesActivite = domainesActivite;
+        }, (err) => {
+          console.log(err);
         })
     }
 
