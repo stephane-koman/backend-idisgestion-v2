@@ -1,0 +1,29 @@
+<div class="pagination-box" *ngIf="debut > 0">
+    <div class="pagination-range">
+      Results: <span>{{debut}}</span> - <span>{{fin}}</span> / <span>{{totalElements}}</span>
+    </div>
+    <div class="pagination-controllers">
+      <div class="pagination-limit">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Limit:</span>
+          </div>
+          <input type="number" [(ngModel)]="size" (change)="searchLimit($event?.target?.value)" min="10" step="1" class="form-control">
+        </div>
+      </div>
+      <div class=" pagination-pages">
+        <button class="btn btn-light pagination-firstpage" [ngClass]="{disabled: currentPage==0}" (click)="firstPage()">«</button>
+        <button class="btn btn-light pagination-prevpage" [ngClass]="{disabled: currentPage==0}" (click)="previousPage()">‹</button>
+        <div class="pagination-page">
+          <div class="input-group mb-3">
+            <input class="form-control" [(ngModel)]="currentPage" (change)="searchPage($event?.target?.value)" min="1" step="1" type="number" max="{{totalPages}}">
+            <div class="input-group-prepend">
+              <span class="input-group-text">/{{totalPages}}</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-light pagination-nextpage" [ngClass]="{disabled: currentPage == totalPages}" (click)="nextPage()">›</button>
+        <button class="btn btn-light pagination-lastpage" [ngClass]="{disabled: currentPage == totalPages}" (click)="lastPage()">»</button>
+      </div>
+    </div>
+  </div>  
